@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 +(void)init;
 +(BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity;
-
++ (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -45,11 +45,9 @@
 }
 ```
 
-3. 由于Xinstall 调起App 使用的是**universal links**（iOS 9 以后）
+3. **universal links** 配置
 
-   所以我们需要配置Universal Link 相关
-
-      首先，我们需要到[苹果开发者网站](https://developer.apple.com/)，为当前的App ID开启关联域名(Associated Domains)服务：
+   首先，我们需要到[苹果开发者网站](https://developer.apple.com/)，为当前的App ID开启关联域名(Associated Domains)服务：
 
       ![](res/1.png)
 
@@ -64,7 +62,7 @@
    **而后**我们在AppDelegate中添加**Univeral Link** 调起App的回调方法
 
    ```objective-c
-   - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
      //判断是否通过Xinstall Universal Link 唤起App
      if ([XinstallJSSDK  continueUserActivity:userActivity]){
        //如果使用了Universal link ，此方法必写
@@ -74,6 +72,30 @@
      return YES;
    }
    ```
+
+4. **Scheme** 配置
+
+   在 `AppController.mm` 中添加 **Scheme** 回调的方法
+
+   ```objective-c
+   // iOS9以上会优先走这个方法
+   - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+   	// 处理通过Xinstall URL SchemeURL 唤起App的数据
+   	[XinstallJSSDK handleSchemeURL:url];
+   	return YES;
+   }
+   
+   // iOS9一下调用这个方法
+   - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication annotation:(id)annotation {
+   	// 处理通过Xinstall URL SchemeURL 唤起App的数据
+   	[XinstallJSSDK handleSchemeURL:url];
+   	return YES;
+   }
+   ```
+
+ 
+
+
 
 ## Android 集成
 

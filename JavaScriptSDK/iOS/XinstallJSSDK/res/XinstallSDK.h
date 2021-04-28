@@ -1,4 +1,4 @@
-//  1.2.0
+//  1.2.2
 //  XinstallSDK.h
 //  XinstallSDK
 //
@@ -87,6 +87,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param eventValue 事件值（精确到整数）
  */
 - (void)reportEventPoint:(NSString *_Nonnull)eventID eventValue:(long)eventValue;
+
++ (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 
 
 

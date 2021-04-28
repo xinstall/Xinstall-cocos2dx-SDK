@@ -19,4 +19,11 @@
     return [XinstallSDK continueUserActivity:userActivity];
 }
 
++ (BOOL)handleSchemeURL:(NSURL *_Nullable)URL {
+    if ([XinstallSDK handleSchemeURL: URL]) {
+        return YES;
+    }
+    return NO;
+}
+
 @end

@@ -37,39 +37,53 @@
 }
 ```
 
-3. 由于Xinstall 调起App 使用的是**universal links**（iOS 9 以后）
-
-   所以我们需要配置Universal Link 相关
+3. **Universal Links** 配置
 
    首先，我们需要到[苹果开发者网站](https://developer.apple.com/)，为当前的App ID开启关联域名(Associated Domains)服务：
 
    ![](res/1.png)
 
+   为刚才开发关联域名功能的AppID**创建**新的（或更新现有的）**描述文件**，下载并导入到XCode中(通过xcode自动生成的描述文件，可跳过这一步)：
+   
+   ![](res/2.png)
+   
+   在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)---**具体可以在Xinstall的控制台中找到**，类似applinks:xxxxxxx.xinstall.top
+   
+   ![](res/3.png)
+   
+   **而后**我们在AppDelegate中添加**Univeral Link** 调起App的回调方法
+   
+   ```objective-c
+   - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
+     //判断是否通过Xinstall Universal Link 唤起App
+     if ([XinstallLuaSDK  continueUserActivity:userActivity]){
+       //如果使用了Universal link ，此方法必写
+       return YES;
+     }
+     //其他第三方回调；
+     return YES;
+   }
+   ```
 
+4. **Scheme** 配置
 
+   `在 `AppController.mm` 中添加 **Scheme** 回调的方法
 
-
-为刚才开发关联域名功能的AppID**创建**新的（或更新现有的）**描述文件**，下载并导入到XCode中(通过xcode自动生成的描述文件，可跳过这一步)：
-
-![](res/2.png)
-
-在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)---**具体可以在Xinstall的控制台中找到**，类似applinks:xxxxxxx.xinstall.top
-
-![](res/3.png)
-
-**而后**我们在AppDelegate中添加**Univeral Link** 调起App的回调方法
-
-```objective-c
-- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
-  //判断是否通过Xinstall Universal Link 唤起App
-  if ([XinstallLuaSDK  continueUserActivity:userActivity]){
-    //如果使用了Universal link ，此方法必写
-    return YES;
-  }
-  //其他第三方回调；
-  return YES;
-}
-```
+   ```objective-c
+   // iOS9以上会优先走这个方法
+   - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+   	// 处理通过Xinstall URL SchemeURL 唤起App的数据
+   	[XinstallLuaSDK handleSchemeURL:url];
+   	return YES;
+   }
+   
+   // iOS9一下调用这个方法
+   - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication annotation:(id)annotation {
+   	// 处理通过Xinstall URL SchemeURL 唤起App的数据
+   	[XinstallLuaSDK handleSchemeURL:url];
+   	return YES;
+   }
+   ```
 
 ## Android平台配置
 

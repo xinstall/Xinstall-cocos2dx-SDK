@@ -28,6 +28,12 @@
     return NO;
 }
 
++ (BOOL)handleSchemeURL:(NSURL *_Nullable)URL {
+    if ([XinstallSDK handleSchemeURL: URL]) {
+        return YES;
+    }
+    return NO;
+}
 
 
 @end
