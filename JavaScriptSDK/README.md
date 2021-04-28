@@ -1,6 +1,6 @@
 # Cocos Creator Cocos2dx JS 接入文档
 
-此文档是为Cocos Creator 集成而写，直接使用cocos2d-js 用户需要进行相关更改再集成，具体可以参考[Cocos2dx-js集成适配](https://github.com/xinstall/Xinstall-cocos2dx-SDK/blob/main/JavaScriptSDK/Cocos2d-js/Cocos2dx-js集成.md)
+此文档是为Cocos Creator 集成而写，直接使用cocos2d-js 用户需要进行相关更改再集成，具体可以参考[Cocos2dx-js集成适配](https://gitee.com/xinstall_0/Xinstall-cocos2dx-SDK/blob/main/JavaScriptSDK/Cocos2d-js/Cocos2dx-js集成.md)
 
 ## iOS 集成
 
@@ -47,26 +47,22 @@
 
 3. **universal links** 配置
 
-   首先，我们需要到[苹果开发者网站](https://developer.apple.com/)，为当前的App ID开启关联域名(Associated Domains)服务：
-
-      ![](res/1.png)
+   首先，我们需要到[苹果开发者网站](https://developer.apple.com/)，为当前的App ID开启关联域名(Associated Domains)服务：![](res/1.png)
 
    为刚才开发关联域名功能的AppID**创建**新的（或更新现有的）**描述文件**，下载并导入到XCode中(通过xcode自动生成的描述文件，可跳过这一步)：
 
-      ![](res/2.png)
+      ![](res/2.png)在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)---**具体可以在Xinstall的控制台中找到**，类似applinks:xxxxxxx.xinstall.top
 
-   在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)---**具体可以在Xinstall的控制台中找到**，类似applinks:xxxxxxx.xinstall.top
-
-      ![](res/3.png)
+   ![](res/3.png)
 
    **而后**我们在AppDelegate中添加**Univeral Link** 调起App的回调方法
 
    ```objective-c
 - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
      //判断是否通过Xinstall Universal Link 唤起App
-     if ([XinstallJSSDK  continueUserActivity:userActivity]){
+  if ([XinstallJSSDK  continueUserActivity:userActivity]){
        //如果使用了Universal link ，此方法必写
-       return YES;
+    return YES;
      }
      //其他第三方回调；
      return YES;

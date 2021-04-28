@@ -10,7 +10,6 @@
 
 @interface XinstallJSDelegate()
 
-@property (nonatomic, strong) NSMutableArray *installBlocks;
 @property (nonatomic, strong) NSMutableArray *wakeUpBlocks;
 
 @property (nonatomic, strong) XinstallData *wakeUpData;
@@ -68,7 +67,14 @@
 - (void)getWakeUpDataBlock:(void (^)(XinstallData * _Nullable))wakeUpDataBlock {
     if (self.wakeUpData) {
         if (wakeUpDataBlock) {
-            wakeUpDataBlock([self.wakeUpData copy]);
+            XinstallData *wakeUpData = [[XinstallData alloc] init];
+            wakeUpData.channelCode = self.wakeUpData.channelCode;
+            wakeUpData.data = self.wakeUpData.data;
+            wakeUpData.firstFetch = self.wakeUpData.isFirstFetch;
+            wakeUpData.timeSpan = self.wakeUpData.timeSpan;
+            
+            wakeUpDataBlock(wakeUpData);
+            [self.wakeUpBlocks addObject:[wakeUpDataBlock copy]];
             self.wakeUpData = nil;
         }
     } else {
@@ -109,13 +115,6 @@
 }
 
 #pragma mark - setter and getter methods
-- (NSMutableArray *)installBlocks {
-    if (_installBlocks == nil) {
-        _installBlocks = [[NSMutableArray alloc] init];
-    }
-    return _installBlocks;
-}
-
 - (NSMutableArray *)wakeUpBlocks {
     if (_wakeUpBlocks == nil) {
         _wakeUpBlocks = [[NSMutableArray alloc] init];

@@ -12,6 +12,8 @@
 
 @property (nonatomic, strong) NSMutableArray *wakeUpBlocks;
 
+@property (nonatomic, strong) XinstallData *wakeUpData;
+
 @end
 
 @implementation XinstallLuaDelegate
@@ -50,8 +52,9 @@
             void(^ wakeUpBlock)(XinstallData *) = (void(^)(XinstallData *))block;
             wakeUpBlock(appData);
         }
+    } else {
+        self.wakeUpData = appData;
     }
-    [self.wakeUpBlocks removeAllObjects];
 }
 
 #pragma mark - public methods
@@ -62,10 +65,23 @@
 }
 
 - (void)getWakeUpDataBlock:(void (^)(XinstallData * _Nullable))wakeUpDataBlock {
-    if (wakeUpDataBlock) {
-        [self.wakeUpBlocks addObject:[wakeUpDataBlock copy]];
+    if (self.wakeUpData) {
+        if (wakeUpDataBlock) {
+            XinstallData *wakeUpData = [[XinstallData alloc] init];
+            wakeUpData.channelCode = self.wakeUpData.channelCode;
+            wakeUpData.data = self.wakeUpData.data;
+            wakeUpData.firstFetch = self.wakeUpData.isFirstFetch;
+            wakeUpData.timeSpan = self.wakeUpData.timeSpan;
+            
+            wakeUpDataBlock(wakeUpData);
+            [self.wakeUpBlocks addObject:[wakeUpDataBlock copy]];
+            self.wakeUpData = nil;
+        }
+    } else {
+        if (wakeUpDataBlock) {
+            [self.wakeUpBlocks addObject:[wakeUpDataBlock copy]];
+        }
     }
-    
 }
 
 #pragma mark - Tools methods

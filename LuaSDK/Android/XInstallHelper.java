@@ -94,10 +94,12 @@ public class XInstallHelper {
             //webSdk初始，在buttonId里面定义的按钮点击携带数据
             String co = data.get("co");
             String timeSpan = xAppData.getTimeSpan();
+            Boolean firstFetch = xAppData.getFirstFetch();
             
             jsonObject.put("uo", uo);
             jsonObject.put("co", co);
             jsonObject.put("timeSpan", timeSpan);
+            jsonObject.put("firstFetch",firstFetch);
             
             
         } catch (JSONException e) {

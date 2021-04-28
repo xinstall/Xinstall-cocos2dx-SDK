@@ -28,7 +28,7 @@
             
             timeSpan = [NSString stringWithFormat:@"%zd",appData.timeSpan];
             
-            installDic = @{@"channelCode":channelID,@"bindData":datas,@"timeSpan":timeSpan};
+            installDic = @{@"channelCode":channelID,@"bindData":datas,@"timeSpan":timeSpan,@"isFirstFetch":@(appData.isFirstFetch)};
         }
         
         NSString *json = [XinstallLuaDelegate jsonStringWithObject:installDic];

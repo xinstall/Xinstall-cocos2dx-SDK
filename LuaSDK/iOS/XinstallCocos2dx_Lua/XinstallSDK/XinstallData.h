@@ -16,9 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
                  channelCode:(NSString *)channelCode;
                 
 
-@property (nonatomic, copy) NSDictionary *data;//动态参数
-@property (nonatomic, copy) NSString *channelCode;//渠道编号
-@property (nonatomic, assign) NSInteger timeSpan;//时间间隔s
+/// 动态参数
+@property (nonatomic, copy) NSDictionary *data;
+/// 渠道编号
+@property (nonatomic, copy) NSString *channelCode;
+/// 时间间隔
+@property (nonatomic, assign) NSInteger timeSpan;
+/// 是否是第一次获取到该安装数据。只会在第一次获取到并回调时为YES，后续回调均为NO（唤醒数据中该字段始终为 NO）
+@property (nonatomic, assign, getter=isFirstFetch) BOOL firstFetch;
 
 @end
 

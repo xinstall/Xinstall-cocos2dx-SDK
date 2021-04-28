@@ -30,7 +30,7 @@ using namespace cocos2d;
             
             timeSpan = [NSString stringWithFormat:@"%zd",installData.timeSpan];
             
-            installDic = @{@"channelCode":channelID,@"data":datas,@"timeSpan":timeSpan};
+            installDic = @{@"channelCode":channelID,@"data":datas,@"timeSpan":timeSpan,@"isFirstFetch":@(installData.isFirstFetch)};
         }
         
         

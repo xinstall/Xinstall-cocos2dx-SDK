@@ -179,8 +179,8 @@ local xinstall = require("src/ActionManagerTest/xinstall")
 local function wakeUpCallBack(result)
     print("拉起参数回调："..result)
 end
-// 此处第一个参数为网络请求过期时间，只有android 有效，iOS 未提供。
-xinstall:registerWakeUpHandler(10,wakeUpCallBack)
+
+xinstall:registerWakeUpHandler(wakeUpCallBack)
 ```
 
 #### 2. 携带参数安装
@@ -189,8 +189,8 @@ xinstall:registerWakeUpHandler(10,wakeUpCallBack)
 local function getInstallCallBack(result)
     print("安装参数回调："..result)
 end
-
-xinstall:getInstance(getInstallCallBack)
+// 此处第一个参数为网络请求过期时间，只有android 有效，iOS 未提供。
+xinstall:getInstance(10,getInstallCallBack)
 ```
 
 #### 3. 渠道统计相关
