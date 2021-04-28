@@ -13,24 +13,93 @@ using namespace cocos2d;
 
 @implementation XinstallJSBridge
 
++ (BOOL)isEmptyData:(XinstallData *)data {
+    if (data == nil) {
+        return YES;
+    }
+    
+    if (data.channelCode.length > 0) {
+        return NO;
+    }
+    
+    if (data.timeSpan > 0) {
+        return NO;
+    }
+    
+    if ([data.data isKindOfClass:[NSDictionary class]]) {
+        id objUo = [((NSDictionary *)data.data) objectForKey:@"uo"];
+        if ([objUo isKindOfClass:[NSDictionary class]]) {
+            if (((NSDictionary *)objUo).count > 0) {
+                return NO;
+            }
+        } else if ([objUo isKindOfClass:[NSString class]]) {
+            if (((NSString *)objUo).length > 0) {
+                return NO;
+            }
+        }
+    }
+    
+    if ([data.data isKindOfClass:[NSDictionary class]]) {
+        id objCo = [((NSDictionary *)data.data) objectForKey:@"co"];
+        if ([objCo isKindOfClass:[NSDictionary class]]) {
+            if (((NSDictionary *)objCo).count > 0) {
+                return NO;
+            }
+        } else if ([objCo isKindOfClass:[NSString class]]) {
+            if (((NSString *)objCo).length > 0) {
+                return NO;
+            }
+        }
+    }
+    
+    return YES;
+}
+
 + (void)getInstallParams {
     [[XinstallJSDelegate defaultManager] getInstallDataBlock:^(XinstallData * _Nullable installData, XinstallError * _Nullable error) {
         NSDictionary *installDic = @{};
-        if (installData) {
-            NSString *channelID = @"";
-            NSDictionary *datas = @{};
-            NSString *timeSpan = @"";
-            if (installData.data) {
-                datas = installData.data;
+        if (![XinstallJSBridge isEmptyData:installData]) {
+            NSString *channelCode = @"";
+            NSString * timeSpan = @"0";
+            
+            NSDictionary *uo;
+            NSDictionary *co;
+            NSMutableDictionary *dataDic = [NSMutableDictionary dictionary];
+            if ([installData.data isKindOfClass:[NSDictionary class]]) {
+                uo = [installData.data objectForKey:@"uo"];
+                co = [installData.data objectForKey:@"co"];
+            }
+            
+            if (uo) {
+                id uoJson;
+                if ([uo isKindOfClass:[NSDictionary class]]) {
+                    uoJson = uo;
+                } else if ([uo isKindOfClass:[NSString class]]) {
+                    uoJson = uo;
+                }
+            
+                [dataDic setValue:uoJson?:@{} forKey:@"uo"];
+            }
+            
+            if (co) {
+                id coJson;
+                if ([co isKindOfClass:[NSDictionary class]]) {
+                    coJson = co;
+                } else if ([uo isKindOfClass:[NSString class]]) {
+                    coJson = co;
+                }
+            
+                [dataDic setValue:coJson?:@{} forKey:@"co"];
             }
             
             if (installData.channelCode) {
-                channelID = installData.channelCode;
+                channelCode = installData.channelCode;
             }
             
-            timeSpan = [NSString stringWithFormat:@"%zd",installData.timeSpan];
-            
-            installDic = @{@"channelCode":channelID,@"data":datas,@"timeSpan":timeSpan,@"isFirstFetch":@(installData.isFirstFetch)};
+            if (installData.timeSpan > 0) {
+                timeSpan = [NSString stringWithFormat:@"%zd",installData.timeSpan];
+            }
+            installDic = @{@"channelCode": channelCode,@"timeSpan":timeSpan, @"data": dataDic,@"isFirstFetch":@(installData.isFirstFetch)};
         }
         
         
@@ -68,22 +137,54 @@ using namespace cocos2d;
 
 + (void)registerWakeUpHandler {
     [[XinstallJSDelegate defaultManager] getWakeUpDataBlock:^(XinstallData * _Nullable wakeUpData) {
-        NSString *channelID = @"";
-        NSDictionary *datas = @{};
-        NSString *timeSpan = @"";
-        if (wakeUpData.data) {
-            datas = wakeUpData.data;
+        NSDictionary *wakeMsgDic = @{};
+        
+        if (![XinstallJSBridge isEmptyData:wakeUpData]) {
+            NSString *channelCode = @"";
+            NSString * timeSpan = @"0";
+            
+            NSDictionary *uo;
+            NSDictionary *co;
+            NSMutableDictionary *dataDic = [NSMutableDictionary dictionary];
+            if ([wakeUpData.data isKindOfClass:[NSDictionary class]]) {
+                uo = [wakeUpData.data objectForKey:@"uo"];
+                co = [wakeUpData.data objectForKey:@"co"];
+            }
+            
+            if (uo) {
+                id uoJson;
+                if ([uo isKindOfClass:[NSDictionary class]]) {
+                    uoJson = uo;
+                } else if ([uo isKindOfClass:[NSString class]]) {
+                    uoJson = uo;
+                }
+            
+                [dataDic setValue:uoJson?:@{} forKey:@"uo"];
+            }
+            
+            if (co) {
+                id coJson;
+                if ([co isKindOfClass:[NSDictionary class]]) {
+                    coJson = co;
+                } else if ([uo isKindOfClass:[NSString class]]) {
+                    coJson = co;
+                }
+            
+                [dataDic setValue:coJson?:@{} forKey:@"co"];
+            }
+            
+            if (wakeUpData.channelCode) {
+                channelCode = wakeUpData.channelCode;
+            }
+            
+            if (wakeUpData.timeSpan > 0) {
+                timeSpan = [NSString stringWithFormat:@"%zd",wakeUpData.timeSpan];
+            }
+
+            wakeMsgDic = @{@"channelCode": channelCode,@"timeSpan":timeSpan, @"data": dataDic};
         }
         
-        if (wakeUpData.channelCode) {
-            channelID = wakeUpData.channelCode;
-        }
-        
-        timeSpan = [NSString stringWithFormat:@"%zd",wakeUpData.timeSpan];
-        
-        NSDictionary *wakeUpdDic = @{@"channelCode":channelID,@"data":datas,@"timeSpan":timeSpan};
-        
-        NSString *jsonOfWakeUp = [XinstallJSDelegate jsonStringWithObject:wakeUpdDic];
+        NSString *jsonOfWakeUp = [XinstallJSDelegate jsonStringWithObject:wakeMsgDic];
         std::string jsonStr = [jsonOfWakeUp UTF8String];
         
 #ifndef HAVE_INSPECTOR
