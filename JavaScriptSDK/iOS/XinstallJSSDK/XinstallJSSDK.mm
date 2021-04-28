@@ -26,4 +26,15 @@
     return NO;
 }
 
+/// 设置是否显示SDK日志
++ (void)setShowLog:(BOOL)isShow {
+    [XinstallSDK setShowLog:isShow];
+}
+
+/// 是否显示SDK日志
++ (BOOL)isShowLog {
+    return [XinstallSDK isShowLog];
+}
+
+
 @end

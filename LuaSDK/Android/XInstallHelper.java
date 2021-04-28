@@ -30,15 +30,23 @@ public class XInstallHelper {
         XInstall.getInstallParam(new XInstallAdapter() {
             @Override
             public void onInstall(XAppData xAppData) {
-                final String json = toJson(xAppData);
-                Log.d(TAG, json);
-                cocos2dxActivity.runOnGLThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunc, json);
-                        Cocos2dxLuaJavaBridge.releaseLuaFunction(luaFunc);
-                    }
-                });
+				if (xAppData != null) {
+					String jsonString = xAppData.toJsonObject().toString();
+					if (jsonString == null) {
+					    jsonString = "";
+					}
+					
+					Log.d(TAG, jsonString);
+					final String json = jsonString;
+					
+					cocos2dxActivity.runOnGLThread(new Runnable() {
+					    @Override
+					    public void run() {
+					        Cocos2dxLuaJavaBridge.callLuaFunctionWithString(luaFunc, json);
+					        Cocos2dxLuaJavaBridge.releaseLuaFunction(luaFunc);
+					    }
+					});
+				}
             }
 
         });
@@ -48,9 +56,15 @@ public class XInstallHelper {
         XInstall.getWakeUpParam(intent, new XWakeUpAdapter() {
             @Override
             public void onWakeUp(XAppData xAppData) {
-                final String json = toJson(xAppData);
-                Log.d(TAG, json);
+                String jsonString = xAppData.toJsonObject().toString();
+                if (jsonString == null) {
+                    jsonString = "";
+                }
                 
+                Log.d(TAG, jsonString);
+				
+                final String json = jsonString;
+				
                 if (!isRegister) {
                     Log.d(TAG, "wakeupCallback not register , wakeupData = " + json);
                     wakeupDataHolder = json;
@@ -80,32 +94,4 @@ public class XInstallHelper {
             });
         }
     }
-
-    private static String toJson(XAppData xAppData) {
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            jsonObject.put("channelCode", xAppData.getChannelCode());
-
-            //获取数据
-            Map<String, String> data = xAppData.getExtraData();
-            //通过链接后面携带的参数或者通过webSdk初始化传入的data值。
-            String uo = data.get("uo");
-            //webSdk初始，在buttonId里面定义的按钮点击携带数据
-            String co = data.get("co");
-            String timeSpan = xAppData.getTimeSpan();
-            Boolean firstFetch = xAppData.getFirstFetch();
-            
-            jsonObject.put("uo", uo);
-            jsonObject.put("co", co);
-            jsonObject.put("timeSpan", timeSpan);
-            jsonObject.put("firstFetch",firstFetch);
-            
-            
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
-    }
-
 }

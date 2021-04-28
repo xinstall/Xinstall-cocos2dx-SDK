@@ -1,4 +1,4 @@
-//  1.2.5
+//  1.2.6
 //  XinstallSDK.h
 //  XinstallSDK
 //
@@ -40,6 +40,12 @@ NS_ASSUME_NONNULL_BEGIN
  * 获取 Xinstall SDK 当前版本
  */
 + (NSString *)sdkVersion;
+
+/// 设置是否显示SDK日志
++ (void)setShowLog:(BOOL)isShow;
+
+/// 是否显示SDK日志
++ (BOOL)isShowLog;
 
 + (instancetype _Nullable)defaultManager;
 
