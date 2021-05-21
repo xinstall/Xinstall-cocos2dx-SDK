@@ -122,5 +122,13 @@
     return _wakeUpBlocks;
 }
 
+#pragma mark - version methods
+- (NSString *)xiSdkThirdVersion {
+    return @"1.2.7";
+}
+
+- (NSInteger)xiSdkType {
+    return 5;
+}
 
 @end
