@@ -3,7 +3,7 @@
 //  Xinstall
 //
 //  Created by Xinstall on 2020/5/12.
-//  Copyright © 2020 shu bao. All rights reserved.
+//  Copyright © 2021 Shu Bao. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

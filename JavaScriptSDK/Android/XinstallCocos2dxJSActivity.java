@@ -55,6 +55,4 @@ public class XinstallCocos2dxJSActivity extends Cocos2dxActivity {
         // 调用SDK 进行事件上报
         XInstall.reportPoint(eventId, eventValue);
     }
-
-
 }

@@ -124,7 +124,7 @@
 
 #pragma mark - version methods
 - (NSString *)xiSdkThirdVersion {
-    return @"1.2.7";
+    return @"1.2.9";
 }
 
 - (NSInteger)xiSdkType {

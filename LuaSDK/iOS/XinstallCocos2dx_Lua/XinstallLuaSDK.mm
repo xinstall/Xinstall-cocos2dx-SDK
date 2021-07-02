@@ -9,7 +9,7 @@
 #import "XinstallSDK.h"
 #import "XinstallLuaDelegate.h"
 
-NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.2.7_THIRDSDKVERSION_XINSTALL";
+NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.2.9_THIRDSDKVERSION_XINSTALL";
 NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXLUA_THIRDPLATFORM_XINSTALL";
 
 @interface XinstallLuaSDK()

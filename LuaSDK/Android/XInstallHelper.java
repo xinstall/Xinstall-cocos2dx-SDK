@@ -53,29 +53,31 @@ public class XInstallHelper {
     }
 
     public static void getWakeUpParam(Intent intent, final Cocos2dxActivity cocos2dxActivity) {
-        XInstall.getWakeUpParam(intent, new XWakeUpAdapter() {
+        XInstall.getWakeUpParam(cocos2dxActivity,intent, new XWakeUpAdapter() {
             @Override
             public void onWakeUp(XAppData xAppData) {
-                String jsonString = xAppData.toJsonObject().toString();
-                if (jsonString == null) {
-                    jsonString = "";
-                }
-                
-                Log.d(TAG, jsonString);
-				
-                final String json = jsonString;
-				
-                if (!isRegister) {
-                    Log.d(TAG, "wakeupCallback not register , wakeupData = " + json);
-                    wakeupDataHolder = json;
-                    return;
-                }
-                cocos2dxActivity.runOnGLThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Cocos2dxLuaJavaBridge.callLuaFunctionWithString(wakeUpLuaFunc, json);
+                if (xAppData != null) {
+                    String jsonString = xAppData.toJsonObject().toString();
+                    if (jsonString == null) {
+                        jsonString = "";
                     }
-                });
+
+                    Log.d(TAG, jsonString);
+
+                    final String json = jsonString;
+
+                    if (!isRegister) {
+                        Log.d(TAG, "wakeupCallback not register , wakeupData = " + json);
+                        wakeupDataHolder = json;
+                        return;
+                    }
+                    cocos2dxActivity.runOnGLThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Cocos2dxLuaJavaBridge.callLuaFunctionWithString(wakeUpLuaFunc, json);
+                        }
+                    });
+                }
             }
         });
     }

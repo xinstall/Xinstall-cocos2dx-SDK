@@ -20,9 +20,9 @@ public class XinstallCocos2dxJSHelper {
     private static  boolean registerWakeup = false;
     private static String wakeUpDataJsonString;
 
-    private static String REQUIRE_XINSTALL = "var xinstall = require(\"XinstallSDK\");";
+//    private static String REQUIRE_XINSTALL = "var xinstall = require(\"XinstallSDK\");";
     //如果无法成功回调 高版本Cocos Creator构建的项目请使用下方语句
-    // private static String REQUIRE_XINSTALL = "var xinstall = window.__require(\"XinstallSDK\");";
+     private static String REQUIRE_XINSTALL = "var xinstall = window.__require(\"XinstallSDK\");";
     private static String CALLBACK_PATTERN = "xinstall.%s(%s);";
     private static String CALLBACK_INSTALL = "_installCallback";
     private static String CALLBACK_WAKEUP = "_wakeupCallback";
@@ -50,7 +50,7 @@ public class XinstallCocos2dxJSHelper {
     }
 
     public static  void getWakeupParams(Intent intent, final  Cocos2dxActivity cocos2dxActivity) {
-        XInstall.getWakeUpParam(intent, new XWakeUpAdapter() {
+        XInstall.getWakeUpParam(cocos2dxActivity,intent, new XWakeUpAdapter() {
             @Override
             public void onWakeUp(XAppData xAppData) {
                 String jsonString = xAppData.toJsonObject().toString();

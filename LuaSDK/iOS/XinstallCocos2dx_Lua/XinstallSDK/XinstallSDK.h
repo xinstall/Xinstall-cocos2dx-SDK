@@ -1,9 +1,9 @@
-//  1.2.7
+//  1.2.9
 //  XinstallSDK.h
 //  XinstallSDK
 //
 //  Created by Xinstall on 2020/5/7.
-//  Copyright © 2020 shu bao. All rights reserved.
+//  Copyright © 2021 Shu Bao. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
