@@ -44,15 +44,17 @@
    ![](res/1.png)
 
    为刚才开发关联域名功能的AppID**创建**新的（或更新现有的）**描述文件**，下载并导入到XCode中(通过xcode自动生成的描述文件，可跳过这一步)：
-   
+
    ![](res/2.png)
-   
-   在XCode中配置Xinstall为当前应用生成的关联域名(Associated Domains)---**具体可以在Xinstall的控制台中找到**，类似applinks:xxxxxxx.xinstall.top
-   
-   ![](res/3.png)
-   
+
+   在Xcode中配置Xinstall为当前应用生成的关联域名 (Associated Domains) ：**applinks:xxxx.xinstall.top** 和 **applinks:xxxx.xinstall.net**
+
+   > 具体的关联域名可在 Xinstall管理后台 - 对应的应用控制台 - iOS下载配置 页面中找到
+
+   ![](https://doc.xinstall.com/Cocos2d-x/JS/res/3.png)
+
    **而后**我们在AppDelegate中添加**Univeral Link** 调起App的回调方法
-   
+
    ```objective-c
    - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
      //判断是否通过Xinstall Universal Link 唤起App
