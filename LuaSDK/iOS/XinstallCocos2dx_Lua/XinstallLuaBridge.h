@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XinstallLuaBridge : NSObject
 
++ (void)init;
+
++ (void)initWithAd:(NSDictionary *)dict;
+
 + (void)getInstall:(NSDictionary *)dict;
 
 + (void)registerWakeUpHandler:(NSDictionary *)dict;
@@ -18,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)reportRegister;
 
 + (void)reportEventPoint:(NSDictionary *)dict;
+
++ (void)setShowLog:(NSDictionary *)dict;
 
 @end
 

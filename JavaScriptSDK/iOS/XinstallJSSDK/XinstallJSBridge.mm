@@ -8,6 +8,7 @@
 #import "XinstallJSBridge.h"
 #import "XinstallJSDelegate.h"
 #import "XinstallData.h"
+#import "XinstallJSSDK.h"
 
 using namespace cocos2d;
 
@@ -54,6 +55,15 @@ using namespace cocos2d;
     
     return YES;
 }
+
++ (void)init {
+    [XinstallJSSDK init];
+}
+
++ (void)initWithAd:(NSString *)idfa {
+    [XinstallJSSDK initWithAd:idfa];
+}
+
 
 + (void)getInstallParams {
     [[XinstallJSDelegate defaultManager] getInstallDataBlock:^(XinstallData * _Nullable installData, XinstallError * _Nullable error) {
@@ -224,6 +234,10 @@ using namespace cocos2d;
 
 + (void)reportEventId:(NSString *)eventId eventValue:(NSNumber *)eventValue {
     [[XinstallSDK defaultManager] reportEventPoint:eventId eventValue:[eventValue longValue]];
+}
+
++ (void)setShowLog:(BOOL)isShow {
+    [XinstallSDK setShowLog:isShow];
 }
 
 @end

@@ -6,8 +6,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "XinstallSDK.h"
-#import "XinstallData.h"
+#import "XinstallSDK/XinstallSDK.h"
+#import "XinstallSDK/XinstallData.h"
 
 #import "cocos2d.h"
 

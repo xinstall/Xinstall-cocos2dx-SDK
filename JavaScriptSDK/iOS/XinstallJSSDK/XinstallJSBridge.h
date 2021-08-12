@@ -11,6 +11,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface XinstallJSBridge : NSObject
 
++ (void)init;
+
++ (void)initWithAd:(NSString *)idfa;
+
 + (void)getInstallParams;
 
 + (void)registerWakeUpHandler;
@@ -18,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)reportRegister;
 
 + (void)reportEventId:(NSString *)eventId eventValue:(NSNumber *)eventValue;
+
++ (void)setShowLog:(BOOL)isShow;
 
 @end
 

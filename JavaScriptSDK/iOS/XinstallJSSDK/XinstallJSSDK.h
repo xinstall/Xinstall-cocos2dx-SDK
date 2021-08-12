@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XinstallJSSDK : NSObject
 
 + (void)init;
++ (void)initWithAd:(NSString *)idfa;
 + (BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity;
 + (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 

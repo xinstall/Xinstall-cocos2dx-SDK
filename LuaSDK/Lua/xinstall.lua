@@ -1,9 +1,101 @@
 local targetPlatform = cc.Application:getInstance():getTargetPlatform()
 
--- "org/cocos2dx/lua_tests/AppActivity" 为项目AppActivity的package加类名
-local activityClassName = "org/cocos2dx/lua_tests/AppActivity"
+-- "org/cocos2dx/lua/AppActivity" 为项目AppActivity的package加类名
+local activityClassName = "org/cocos2dx/lua/AppActivity"
 
 local xinstall = class("xinstall")
+
+function xinstall:setLog(isOpen)
+    print("call setLog method start")
+    if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+        local luaoc = require "cocos.cocos2d.luaoc"
+        local args = {isOpen = isOpen}
+        local ok, ret = luaoc.callStaticMethod("XinstallLuaBridge", "setShowLog", args)
+        if not ok then
+            print("luaoc setLog error:"..ret)
+        end
+    end
+    if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+		local luaj = require "cocos.cocos2d.luaj"
+		local args = {isOpen}
+		local signs = "(Z)V"
+		local ok,ret = luaj.callStaticMethod(activityClassName,"setLog",args,signs)
+		if not ok then
+		    print("luaoc setLog error:"..ret)
+		end
+    end
+end
+
+function xinstall:init()
+    print("call init method start")
+    if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+        local luaoc = require "cocos.cocos2d.luaoc"
+        local ok, ret = luaoc.callStaticMethod("XinstallLuaBridge", "init")
+        if not ok then
+            print("luaoc init error:"..ret)
+        end
+    end
+    if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+		local luaj = require "cocos.cocos2d.luaj"
+		local args = {}
+		local signs = "()V"
+		local ok,ret = luaj.callStaticMethod(activityClassName,"initNoAd",args,signs)
+		if not ok then
+		    print("luaoc init error:"..ret)
+		end
+    end
+end
+
+function xinstall:initWithAd(params, premissionCallback)
+    print("call init method start")
+    
+    if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+		print(params.idfa)
+        local luaoc = require "cocos.cocos2d.luaoc"
+        local ok, ret = luaoc.callStaticMethod("XinstallLuaBridge", "initWithAd", params)
+        if not ok then
+            print("luaoc init error:"..ret)
+        end
+    end
+    if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+		local luaj = require "cocos.cocos2d.luaj"
+		
+		-- 是否开启网络权限
+		local adEnable = params.adEnable 
+		if (adEnable == null) then
+		    adEnable = true
+			print("adEnable 为必填参数！")
+		end
+		
+		local oaid = params.oaid 
+		if (oaid == null) then 
+			oaid = "";
+		end
+		local gaid = params.gaid
+		if (gaid == null) then
+			gaid = "";
+		end
+		
+		-- 是否内部处理权限
+		local isPremission = params.isPremission
+		if (isPremission == null) then
+		    isPremission = true
+		end
+		
+		if (premissionCallback == null) then
+			premissionCallback = 0
+		end
+		
+		-- print("isPremission"..isPremission.."adEnable"..adEnable.."oaid"..oaid.."gaid"..gaid)
+		local args = {premissionCallback,adEnable,isPremission,oaid,gaid}
+		local signs = "(IZZLjava/lang/String;Ljava/lang/String;)V"
+		local ok,ret = luaj.callStaticMethod(activityClassName,"initWithAd",args,signs)
+		if not ok then
+		    print("luaoc getInstallParam error:"..ret)
+		end
+    end
+
+end
 
 function xinstall:getInstance(s,callback)
 	print("call getInstance method start")
@@ -23,8 +115,7 @@ function xinstall:getInstance(s,callback)
         if not ok then
             print("luaoc ggetInstallParam error:"..ret)
         end
-    end    
-	-- body
+    end
 end
 
 function xinstall:registerWakeUpHandler(callback)
@@ -45,8 +136,7 @@ function xinstall:registerWakeUpHandler(callback)
         if not ok then
             print("luaoc getInstallParam error:"..ret)
         end
-    end   
-	-- body
+    end
 end
 
 function xinstall:reportRegister()
@@ -66,9 +156,7 @@ function xinstall:reportRegister()
         if not ok then
             print("luaoc getInstallParam error:"..ret)
         end
-    end  
-
-    -- body
+    end
 end
 
 function xinstall:reportEventPoint(pointId,pointValue)
@@ -89,8 +177,7 @@ function xinstall:reportEventPoint(pointId,pointValue)
         if not ok then
             print("luaoc getInstallParam error:"..ret)
         end
-    end 
-    -- body
+    end
 end
 
 return xinstall

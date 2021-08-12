@@ -1,101 +1,94 @@
 # Cocos Creator Cocos2dx JS 接入文档
 
-此文档是为Cocos Creator 集成而写，直接使用cocos2d-js 用户需要进行相关更改再集成，具体可以参考[Cocos2dx-js集成适配](https://gitee.com/xinstall_0/Xinstall-cocos2dx-SDK/blob/main/JavaScriptSDK/Cocos2d-js/Cocos2dx-js集成.md)
+此文档基于 Cocos Creator 集成开发工具进行编写，如果您没有使用 Cocos Creator ，而是直接使用 cocos2d-JS 工程进行开发，那么需要进行相关更改后再集成，具体可以参考 [Cocos2dx-JS 集成适配](https://gitee.com/xinstall_0/Xinstall-cocos2dx-SDK/blob/main/JavaScriptSDK/Cocos2d-js/Cocos2dx-js集成.md)
+
+> 【重要说明】：从 v1.5.0 版本（含）开始，调用  Xinstall 模块的任意方法前，必须先调用一次初始化方法（init 或者 initWithAd），否则将导致其他方法无法正常调用。
+>
+> 从 v1.5.0 以下升级到 v1.5.0 以上版本后，需要自行修改代码调用初始化方法，Xinstall 模块无法在升级后自动兼容。
+
+
 
 ## iOS 集成
 
 ### 一、 导出工程
 
-1. 在选择**Cocos Creator**菜单`项目`->`构建发布` 后的**弹框中**，将发布平台选择为`iOS`,并填写其他相关配置，最后点击`构建`。
+1. 在 **Cocos Creator** 的菜单中，点击 `项目` -> `构建发布` ，在弹框中将发布平台选择为 `iOS` ，并填写其他相关配置，最后点击 `构建`。
 
-2. 在`构建`执行结束后,使用**Xcode**打开`${projectDir}/build/jsb-link/frameworks/runtime-src/proj.ios_mac`中的iOS项目。
+2. `构建` 完成后，使用 **Xcode** 打开 `工程目录/build/jsb-link/frameworks/runtime-src/proj.ios_mac` 中的iOS 项目。
 
-### 二、 添加文件
+### 二、 添加 iOS 端文件
 
-​		将`iOS`目录下的`XinstallSDK`文件夹拷贝到项目的`ios`目录下然后在Xcode工程左边目录里找到`ios` 目录，然后通过拖动`XinstallSDK`文件夹到该目录下，add的时候注意勾选**“Copy items if needed”**、**“Create groups”**
+​		将 `JavaScriptSDK/iOS` 目录下的 `XinstallJSSDK` 文件夹拖入项目的 `ios` 目录，然后在弹窗框里，注意勾选**“Copy items if needed”**、**“Create groups”**
 
 ### 三、相关配置
 
 #### 1. 初始化配置
 
- 		在`Xinstall`官网注册好账号后，创建好App后，在项目中的Info.plist文件配置appKey键值对，具体如下
+在 [Xinstall官网](https://www.xinstall.com) 的管理后台中，创建对应 App 并记录 appKey 的值，然后在 Xcode 项目的 `Info.plist` 文件内添加如下配置：
 
 ```xml
 <key>com.xinstall.APP_KEY</key>
-<string>Xinstall创建的项目的AppKey,由Xinstall官网你的控制后台获得</string>
+<string>Xinstall 管理后台创建的 App 对应的 AppKey</string>
 ```
 
 #### 2. 接入SDK
 
-1. 在项目的 `AppController.mm` 文件夹中加入头文件 
+1. **在 Xcode 项目的 `AppController.mm` 文件夹中加入头文件** 
 
 ```objective-c
 #import "XinstallJSSDK/XinstallJSSDK.h"
 ```
 
-2. 在方法 `- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions` 中加入方法
+2. **配置 Universal links 关联域名**
 
-```objective-c
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // cocos2dx 的方法-----
-    .....
-    // Xinstall Cocos2dx JS SDK 接入
-    [XinstallJSSDK init];
-    return YES;
-}
-```
+   对于 iOS，为确保能正常使用一键拉起功能，AppID 必须开启 Associated Domains 功能，请到苹果开发者网站，选择 “Certificate, Identifiers & Profiles”，再选择 iOS 对应的 AppID，开启 Associated Domains：![](res/1.png)
 
-3. **universal links** 配置
+   开启 Associated Domains 功能后，需要创建**新的（或更新现有的）**描述文件，下载并导入到 Xcode 中（通过Xcode自动生成的描述文件，可跳过这一步）：
 
-   首先，我们需要到[苹果开发者网站](https://developer.apple.com/)，为当前的App ID开启关联域名(Associated Domains)服务：![](res/1.png)
-
-   为刚才开发关联域名功能的AppID**创建**新的（或更新现有的）**描述文件**，下载并导入到XCode中(通过xcode自动生成的描述文件，可跳过这一步)：
-
-      ![](res/2.png)
-
-   在Xcode中配置Xinstall为当前应用生成的关联域名 (Associated Domains) ：**applinks:xxxx.xinstall.top** 和 **applinks:xxxx.xinstall.net**
+      ![](res/2.png)在 Xcode 中配置 Xinstall 为当前应用生成的关联域名 (Associated Domains) ：**applinks:xxxx.xinstall.top** 和 **applinks:xxxx.xinstall.net**
 
    > 具体的关联域名可在 Xinstall管理后台 - 对应的应用控制台 - iOS下载配置 页面中找到
 
-   ![](https://doc.xinstall.com/Cocos2d-x/JS/res/3.png)
+   ![](https://doc.xinstall.com/integrationGuide/iOS3.png)
 
-   **而后**我们在AppDelegate中添加**Univeral Link** 调起App的回调方法
-
-   ```objective-c
-   - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
-   //判断是否通过Xinstall Universal Link 唤起App
-   if ([XinstallJSSDK  continueUserActivity:userActivity]){
-        //如果使用了Universal link ，此方法必写
-     return YES;
-      }
-      //其他第三方回调；
-      return YES;
-    }
-   ```
-
-4. **Scheme** 配置
-
-   在 `AppController.mm` 中添加 **Scheme** 回调的方法
-
-   ```objective-c
-   // iOS9以上会优先走这个方法
-   - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-   	// 处理通过Xinstall URL SchemeURL 唤起App的数据
-   	[XinstallJSSDK handleSchemeURL:url];
-   	return YES;
-   }
+   配置完成后，需要在 `AppController.mm` 中添加 **Univeral Link** 相关的回调方法
    
-   // iOS9一下调用这个方法
-   - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication annotation:(id)annotation {
-   	// 处理通过Xinstall URL SchemeURL 唤起App的数据
-   	[XinstallJSSDK handleSchemeURL:url];
-   	return YES;
+   ```objective-c
+   - (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler {
+     //判断是否通过Xinstall Universal Link 唤起App
+     if ([XinstallJSSDK continueUserActivity:userActivity]) {
+       //如果使用了Universal link ，此方法必写
+       return YES;
+     }
+     //其他第三方回调；
+     return YES;
    }
    ```
+3. **Scheme 配置**
+
+   1. 在Xcode选中**Target** -> **Info** -> **URL Types**，配置**Xinstall** 为当前应用生成的 Scheme，如图所示：
+
+      ![配置 scheme](https://doc.xinstall.com/integrationGuide/iOS6.png)
+
+   2. 在 `AppController.mm` 中添加 **Scheme** 回调的方法
+
+      ```objective-c
+      // iOS9 以上会优先走这个方法
+      - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+      	// 处理通过Xinstall URL SchemeURL 唤起App的数据
+      	[XinstallSDK handleSchemeURL:url];
+      	return YES;
+      }
+      
+      // iOS9 以下调用这个方法
+      - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(nullable NSString *)sourceApplication annotation:(id)annotation {
+      	// 处理通过Xinstall URL SchemeURL 唤起App的数据
+      	[XinstallSDK handleSchemeURL:url];
+      	return YES;
+      }
+      ```
 
  
-
-
 
 ## Android 集成
 
@@ -117,62 +110,7 @@ private static String REQUIRE_XINSTALL = "var xinstall = require(\"XinstallSDK\"
 //private static String REQUIRE_XINSTALL = "var xinstall = window.__require(\"XinstallSDK\");";
 ```
 
-### 三、添加MyApplication 
-
-如果原来工程中没有自己的Application 那么就需要手动添加一个了
-
-具体代码如下
-
-```java
-package org.cocos2dx.javascript;
-
-import android.app.ActivityManager;
-import android.app.Application;
-import android.content.Context;
-
-import com.xinstall.XInstall;
-
-public class MyApplication extends Application {
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        if (isMainProcess()) {
-            // 初始化
-            XInstall.init(this);
-            // 启用log
-            XInstall.setDebug(true);
-        }
-    }
-
-    public boolean isMainProcess() {
-        int pid = android.os.Process.myPid();
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningAppProcessInfo appProcess : activityManager.getRunningAppProcesses()) {
-            if (appProcess.pid == pid) {
-                return getApplicationInfo().packageName.equals(appProcess.processName);
-            }
-        }
-        return false;
-    }
-}
-```
-
-**备注:** 当应用存在多个进程时，确保只在主进程进行初始化
-在AndroidManifest.xml中的application标签中添加android:name=".MyApplication"指定自定义的Application类，以便程序启动的时候初始化自定义Application类，而不是默认配置的Application类。其配置大致如下
-
-```xml
-<application
-    android:name=".MyApplication"
-    android:allowBackup="false"
-    android:icon="@drawable/ic_launcher"
-    android:label="@string/app_name"
-    android:supportsRtl="true"
-    android:theme="@style/AppTheme">
-    ...
-</application>
-```
-
-### 四、添加权限
+### 三、添加权限
 
 在 `AndroidManifest.xml` 中添加 **Xinstall** 需要的网络权限
 
@@ -181,7 +119,7 @@ public class MyApplication extends Application {
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 ```
 
-### 五、配置AppKey
+### 四、配置AppKey
 
 同样在 `AndroidManifest.xml` 中添加 标签
 
@@ -189,7 +127,7 @@ public class MyApplication extends Application {
 <meta-data android:name="com.xinstall.APP_KEY" android:value="Xinstall_APPKEY"/>
 ```
 
-### 六、拉起配置
+### 五、拉起配置
 
 1. 将Cocos2dx项目中`AppActivity`继承 **Xinstall** 提供的 **XinstallCocos2dxJSActivity**（就是前面拷贝的两个文件中的一个）
 
@@ -221,7 +159,6 @@ public class MyApplication extends Application {
        <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
    
        <application
-           android:name="org.cocos2dx.javascript.MyApplication"
            android:supportsRtl="true"
            android:allowBackup="false"
            android:label="@string/app_name"
@@ -256,38 +193,51 @@ public class MyApplication extends Application {
    </manifest>
    
    ```
+   
 
-   **注：** 如果不想继承Xinstall的Activity类，可以将Activity中的方法加到**AppActivity**里
+**注：** 如果不想继承Xinstall的Activity类，可以将Activity中的方法加到**AppActivity**里
 
-## 使用指南
 
-### 一、 配置
 
-将文件夹内的`XinstallSDK.js`文件拖入`Cocos Creator`项目中的**Script**中，在使用的组件中加入如下代码
+## 模块使用指南
+
+### 一、 导入模块
+
+将文件夹内的 `XinstallSDK.js` 文件拖入 `Cocos Creator` 项目中的 **Script** 中，在使用的组件中加入如下代码
 
 ```javascript
 var xinstall = require("XinstallSDK");
 ```
 
-如果只是使用基础班功能（无需携带参数安装、渠道统计、调起传参），直接以前的配置就行了。
+> 如果只是使用基础功能（无需携带参数安装、渠道统计、调起传参），不需要写任意代码，配置完成即可使用。
 
 ### 二、使用
 
-#### 1. 拉起传参
+#### 1. 初始化 Xinstall 模块
 
-在组件脚本的`onLoad`方法中，注册调起回调，
+> 注意：从 v1.5.0 版本开始，在调用 Xinstall 模块的任意方法之前，必须调用一次初始化方法，只需要调用一次即可，不需要反复调用。
+>
+> v1.5.0 之前的版本会在启动时自动初始化，无需调用，也无法调用。
+>
+> 从 v1.5.0 以下版本升级上来时，请注意去除原先原生代码中的初始化代码，改为调用模块提供的 JS 端初始化方法：
+>
+> * iOS 端请去除原生代码中的：`[XinstallJSSDK init];`
+> * Android 端请去除原生代码中的：`XInstall.init(this);`  和 `XInstall.setDebug(true);`
+
+调用 `init` 方法进行初始化：
 
 ```javascript
-    // 拉起回调方法
-    wakeupCallback: function(appData){
-        cc.log("拉起参数：channelCode=" + appData.channelCode 
-            + ", data=" + appData.data + ", timeSpan=" appData.timeSpan );
-    },
-    // 在 onLoad 中调用
-    xinstall.registerWakeUpHandler(this.wakeupCallback);
+var xinstall = require("XinstallSDK");
+xinstall.init();
 ```
 
+
+
 #### 2. 携带参数安装
+
+> 注意：调用该功能对应接口时需要在 Xinstall 中为对应 App 开通专业版服务
+
+在 APP 需要安装参数时（在 web 中下载并安装 App 完成后，由 web 网页中传递过来的，如邀请码、游戏房间号等动态参数），调用 `getInstallParams` 接口，在回调中获取 web 中传递过来的参数。
 
 ```javascript
 // 安装回调方法
@@ -295,27 +245,202 @@ installCallback: function(appData) {
   	cc.log("安装参数：channelCode=" + appData.channelCode 
             + ", data=" + appData.data + ", timeSpan=" appData.timeSpan );
 }
-// 注第一个参数只对android 有效。
+// 注：第一个参数只对android 有效，为获取安装参数的超时时间
 xinstall.getInstallParams(10, this.installCallback);
 ```
 
-#### 3. 渠道统计相关
 
-##### 3.1 注册上报
+
+#### 3. 拉起传参
+
+> 注意：调用该功能对应接口时需要在 Xinstall 中为对应 App 开通专业版服务
+
+在 App 需要唤醒参数时（手机已经安装 App 时，在 web 中直接通过 Universal Links / scheme 一键拉起 App），首先在 App 启动时预先调用 `registerWakeUpHandler` 接口添加监听，在回调中获取 web 中传递过来的参数。
+
+在组件脚本的 `onLoad` 方法中，注册拉起监听
+
+```javascript
+// 拉起回调方法
+wakeupCallback: function(appData){
+  cc.log("拉起参数：channelCode=" + appData.channelCode 
+         + ", data=" + appData.data + ", timeSpan=" appData.timeSpan );
+},
+// 在 onLoad 中调用
+xinstall.registerWakeUpHandler(this.wakeupCallback);
+```
+
+
+
+#### 4. 渠道统计相关
+
+##### 4.1 注册上报
+
+在业务中合适的时机（一般指用户注册）调用指定方法上报注册量
 
 ```javascript
 xinstall.reportRegister();
 ```
 
-##### 3.2 事件点上报
+**补充说明**
 
-注：需要在官网控制台内注册效果点进行统计，只为某些特殊业务的效果点进行统计
+Xinstall 会自动完成安装量、留存率、活跃量、在线时长等渠道统计数据的上报工作，如需统计每个渠道的注册量（对评估渠道质量很重要），可根据自身的业务规则，在确保用户完成 App 注册的情况下，调用该方法上报后，即可在 Xinstall 平台即可看到注册量。
+
+
+
+##### 4.2 事件点上报
+
+事件统计，主要用来统计终端用户对于某些特殊业务的使用效果，如充值金额，分享次数，广告浏览次数等等。
+调用接口前，需要先进入 Xinstall 管理后台**事件统计**然后点击新增事件。
 
 ```javascript
+// 第一个参数为事件ID，字符串类型
+// 第二个参数为事件值，数字类型，必须为正整数
 xinstall.reportEvent("event", 1);
 ```
 
-## 导出apk/ipa包并上传
+**补充说明**
+
+只有 Xinstall 后台创建事件统计，并且代码中 **传递的事件ID** 与 **后台创建的ID** 一致时，上报数据才会被统计。
+
+
+
+#### 5. 广告平台渠道功能
+
+> 如果您在 Xinstall 管理后台对应 App 中，**只使用「自建渠道」，而不使用「广告平台渠道」，则无需进行本小节中额外的集成工作**，也能正常使用 Xinstall 提供的其他功能。
+>
+> 注意：根据目前已有的各大主流广告平台的统计方式，目前 iOS 端和 Android 端均需要用户授权并获取一些设备关键值后才能正常进行 [ 广告平台渠道 ] 的统计，如 IDFA / OAID / GAID 等，对该行为敏感的 App 请慎重使用该功能。
+
+
+
+##### 5.1 配置工作
+
+**iOS 端：**
+
+在 Xcode 中打开 iOS 端的工程，在 `Info.plist` 文件中配置一个权限作用声明（如果不配置将导致 App 启动后马上闪退）：
+
+```xml
+<key>NSUserTrackingUsageDescription</key>
+<string>这里是针对获取 IDFA 的作用描述，请根据实际情况填写</string>
+```
+
+在 Xcode 中，找到 App 对应的「Target」，再点击「General」，然后在「Frameworks, Libraries, and Embedded Content」中，添加如下两个框架：
+
+* AppTrackingTransparency.framework
+* AdSupport.framework
+
+**Android 端：**
+
+  相关接入可以参考广告平台联调指南中的[《Android集成指南》](https://doc.xinstall.com/AD/AndroidGuide.html)
+
+1. 接入IMEI需要额外的全下申请，需要在`AndroidManifest`中添加权限声明
+
+   ```java
+   <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+2. 如果使用OAID，因为内部使用反射获取oaid 参数，所以都需要外部用户接入OAID SDK 。具体接入参考[《Android集成指南》](https://doc.xinstall.com/AD/AndroidGuide.html)
+
+
+
+##### 5.2、更换初始化方法
+
+**使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
+
+> iOS 端使用该方法时，需要传入 IDFA（在 JS 脚本内）。您可以使用任意方式在 JS 脚本中获取到 IDFA，例如第三方获取 IDFA 的模块。
+>
+> 如果您没有找到合适的第三方模块，您可以使用 Xinstall 提供的配套模块在 JS 脚本内获取到 IDFA，再调用 initWithAd 方法进行初始化。配套插件在 **JavaScriptSDK/Tool/IDFA 目录下**，以下代码示例均使用该模块进行说明
+
+**入参说明**：需要主动传入参数，字典
+
+入参内部字段：
+
+* iOS 端：
+
+  | 参数名 | 参数类型 | 描述                   |
+  | ------ | -------- | ---------------------- |
+  | idfa   | 字符串   | iOS 系统中的广告标识符 |
+
+* Android 端：
+  | 参数名        | 参数类型 | 描述               |
+  | ------------- | -------- | ------------------ |
+  | adEnabled     | boolean  | 是否使用广告功能   |
+  | oaid （可选） | string   | OAID               |
+  | gaid（可选）  | string   | GaID(google Ad ID) |
+
+  
+
+**调用示例**
+
+```javascript
+var xinstall = require("XinstallSDK");
+var idfaTool = require("IDFATool");
+
+if (cc.sys.OS_IOS == cc.sys.os) {
+  idfaTool.getIDFA(function(idfa) {
+    xinstall.initWithAd({idfa:idfa});
+  });
+} else if (cc.sys.OS_ANDROID == cc.sys.os) {
+  // oaid和gaid 为选传，不传则代表使用SDK自动去获取（SDK内不包括OAID SDK，需要自己接入）
+  xinstall.initWithAd({adEnabled:true,oaid:"oaid测试",gaid:"测试"});
+  // 如果希望在完成初始化，立即执行之后的步骤可以通过 下列代码实现-------------------------
+  //xinstall.initWithAd({adEnabled:true,oaid:"oaid测试",gaid:"测试"},function() {
+	//		// xinstall.getInstallParams 或者 xinstall.registerWakeUpHandler 等操作
+	//});
+  //-----------------------------------------------------------------------------
+}
+
+// SDK 是否打印相关信息 
+  xinstall.setLog(true)
+```
+
+
+
+##### 5.3、上架须知
+
+**在使用了广告平台渠道后，若您的 App 需要上架，请认真阅读本段内容。**
+
+##### 5.3.1 iOS 端：上架 App Store
+
+1. 如果您的 App 没有接入苹果广告（即在 App 中显示苹果投放的广告），那么在提交审核时，在广告标识符中，请按照下图勾选：
+
+![IDFA](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_7.png)
+
+
+
+1. 在 App Store Connect 对应 App —「App隐私」—「数据类型」选项中，需要选择：**“是，我们会从此 App 中收集数据”**：
+
+![AppStore_IDFA_1](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_1.png)
+
+在下一步中，勾选「设备 ID」并点击【发布】按钮：
+
+![AppStore_IDFA_2](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_2.png)
+
+点击【设置设备 ID】按钮后，在弹出的弹框中，根据实际情况进行勾选：
+
+- 如果您仅仅是接入了 Xinstall 广告平台而使用了 IDFA，那么只需要勾选：**第三方广告**
+- 如果您在接入 Xinstall 广告平台之外，还自行使用 IDFA 进行别的用途，那么在勾选 **第三方广告** 后，还需要您根据您的实际使用情况，进行其他选项的勾选
+
+![AppStore_IDFA_3](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_3.png)
+
+![AppStore_IDFA_4](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_4.png)
+
+勾选完成后点击【下一步】按钮，在 **“从此 App 中收集的设备 ID 是否与用户身份关联？”** 选项中，请根据如下情况进行选择：
+
+- 如果您仅仅是接入了 Xinstall 广告平台而使用了 IDFA，那么选择 **“否，从此 App 中收集的设备 ID 未与用户身份关联”**
+- 如果您在接入 Xinstall 广告平台之外，还自行使用 IDFA 进行别的用途，那么请根据您的实际情况选择对应的选项
+
+![AppStore_IDFA_5](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_5.png)
+
+最后，在弹出的弹框中，选择 **“是，我们会将设备 ID 用于追踪目的”**，并点击【发布】按钮：
+
+![AppStore_IDFA_6](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_6.png)
+
+##### 5.3.2 Android 端
+
+无特殊需要注意，如碰上相关合规问题，参考 [《应用合规指南》](https://doc.xinstall.com/应用合规指南.html)
+
+
+
+## 导出 APK / IPA 包并上传
 
 参考官网文档
 
@@ -323,9 +448,13 @@ xinstall.reportEvent("event", 1);
 
 [Android-集成](https://doc.xinstall.com/integrationGuide/AndroidIntegrationGuide.html#四、导出apk包并上传)
 
+
+
 ## 如何测试功能
 
 参考官方文档 [测试集成效果](https://doc.xinstall.com/integrationGuide/comfirm.html)
+
+
 
 ## 更多 Xinstall 进阶功能
 

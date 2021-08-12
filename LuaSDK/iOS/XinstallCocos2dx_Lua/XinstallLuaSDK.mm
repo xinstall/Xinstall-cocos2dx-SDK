@@ -6,10 +6,10 @@
 //
 
 #import "XinstallLuaSDK.h"
-#import "XinstallSDK.h"
+#import "XinstallSDK/XinstallSDK.h"
 #import "XinstallLuaDelegate.h"
 
-NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.3.0_THIRDSDKVERSION_XINSTALL";
+NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.0_THIRDSDKVERSION_XINSTALL";
 NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXLUA_THIRDPLATFORM_XINSTALL";
 
 @interface XinstallLuaSDK()
@@ -22,6 +22,10 @@ NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXLUA_TH
     NSLog(@"%@",XinstallThirdPlatform);
     
     [XinstallSDK initWithDelegate:[XinstallLuaDelegate defaultManager]];
+}
+
++ (void)initWithAd:(NSString *)idfa {
+    [XinstallSDK initWithDelegate:[XinstallLuaDelegate defaultManager] idfa:idfa];
 }
 
 + (BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity{

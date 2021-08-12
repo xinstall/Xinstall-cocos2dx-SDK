@@ -6,7 +6,7 @@
 //
 
 #import "XinstallLuaDelegate.h"
-#import "XinstallSDK.h"
+#import "XinstallSDK/XinstallSDK.h"
 
 @interface XinstallLuaDelegate()<XinstallDelegate>
 
@@ -124,7 +124,7 @@
 
 #pragma mark - version methods
 - (NSString *)xiSdkThirdVersion {
-    return @"1.3.0";
+    return @"1.5.0";
 }
 
 - (NSInteger)xiSdkType {

@@ -7,6 +7,7 @@
 
 #import "XinstallLuaBridge.h"
 #import "XinstallLuaDelegate.h"
+#import "XinstallLuaSDK.h"
 
 @implementation XinstallLuaBridge
 
@@ -50,6 +51,18 @@
     }
     
     return YES;
+}
+
++ (void)init {
+    [XinstallLuaSDK init];
+}
+
++ (void)initWithAd:(NSDictionary *)dict {
+    NSString *idfa = dict[@"idfa"];
+    if (!idfa) {
+        idfa = @"";
+    }
+    [XinstallLuaSDK initWithAd:idfa];
 }
 
 +(void)getInstall:(NSDictionary *)dict {
@@ -185,6 +198,10 @@
     NSString *eventId = [dict objectForKey:@"eventId"];
     long eventValue = [[dict objectForKey:@"eventValue"] longValue];
     [[XinstallSDK defaultManager] reportEventPoint:eventId eventValue:eventValue];
+}
+
++ (void)setShowLog:(NSDictionary *)dict {
+    [XinstallSDK setShowLog:[dict[@"isOpen"] boolValue]];
 }
 
 @end

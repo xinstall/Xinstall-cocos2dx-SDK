@@ -11,7 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 // 主要将XinstallSDK的委托传给LuaDelegate
 @interface XinstallLuaSDK : NSObject
 
-+(void)init;
++ (void)init;
++ (void)initWithAd:(NSString *)idfa;
 +(BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity;
 + (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 /// 设置是否显示SDK日志
