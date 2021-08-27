@@ -24,7 +24,7 @@
 
 #### 1. 初始化配置
 
-在 [Xinstall官网](https://www.xinstall.com) 的管理后台中，创建对应 App 并记录 appKey 的值，然后在 Xcode 项目的 `Info.plist` 文件内添加如下配置：
+ 		在 [Xinstall官网](https://www.xinstall.com) 的管理后台中，创建对应 App 并记录 appKey 的值，然后在 Xcode 项目的 `Info.plist` 文件内添加如下配置：
 
 ```xml
 <key>com.xinstall.APP_KEY</key>
@@ -249,6 +249,10 @@ installCallback: function(appData) {
 xinstall.getInstallParams(10, this.installCallback);
 ```
 
+> 您可以在 Xinstall 管理后台对应的 App 内，看到所有的传递参数以及参数出现的次数，方便你们做运营统计分析，如通过该报表知道哪些页面或代理带来了最多客户，客户最感兴趣的 App 页面是什么等。具体参数名和值，运营人员可以和技术协商定义，或联系 Xinstall 客服咨询。具体效果如下图：
+>
+> ![传参报表](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/paramsTable.png)
+
 
 
 #### 3. 拉起传参
@@ -330,14 +334,15 @@ xinstall.reportEvent("event", 1);
 
 **Android 端：**
 
-  相关接入可以参考广告平台联调指南中的[《Android集成指南》](https://doc.xinstall.com/AD/AndroidGuide.html)
+  相关接入可以参考广告平台联调指南中的[《Android集成指南》]()
 
 1. 接入IMEI需要额外的全下申请，需要在`AndroidManifest`中添加权限声明
 
-   ```java
+   ```xml
    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+   ```
 
-2. 如果使用OAID，因为内部使用反射获取oaid 参数，所以都需要外部用户接入OAID SDK 。具体接入参考[《Android集成指南》](https://doc.xinstall.com/AD/AndroidGuide.html)
+2. 如果使用OAID，因为内部使用反射获取oaid 参数，所以都需要外部用户接入OAID SDK 。具体接入参考[《Android集成指南》]()
 
 
 

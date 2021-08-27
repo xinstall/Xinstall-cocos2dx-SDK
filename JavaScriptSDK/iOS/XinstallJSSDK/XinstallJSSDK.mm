@@ -9,7 +9,7 @@
 #import "XinstallSDK.h"
 #import "XinstallJSDelegate.h"
 
-NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.0_THIRDSDKVERSION_XINSTALL";
+NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.1_THIRDSDKVERSION_XINSTALL";
 NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXJS_THIRDPLATFORM_XINSTALL";
 
 @implementation XinstallJSSDK

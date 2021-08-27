@@ -10,8 +10,6 @@
 
 ​		将 `LuaSDK/iOS` 目录下的 `XinstallCocos2dx_Lua` 文件夹拖入项目的 `ios` 目录，然后在弹窗框里，注意勾选**“Copy items if needed”**、**“Create groups”**
 
-【注】如果我们显示`Library not found for -|XinstallSDK` 可以在咱们**Targets**->**Build Settings**->**Library Search Paths** 加入我们Xinstall的.a 文件的地址
-
 ### 二、相关配置
 
 #### 1. 初始化配置
@@ -201,6 +199,10 @@ end
 // 注：第一个参数只对android 有效，为获取安装参数的超时时间
 xinstall:getInstance(10, getInstallCallBack)
 ```
+
+> 您可以在 Xinstall 管理后台对应的 App 内，看到所有的传递参数以及参数出现的次数，方便你们做运营统计分析，如通过该报表知道哪些页面或代理带来了最多客户，客户最感兴趣的 App 页面是什么等。具体参数名和值，运营人员可以和技术协商定义，或联系 Xinstall 客服咨询。具体效果如下图：
+>
+> ![传参报表](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/paramsTable.png)
 
 
 
