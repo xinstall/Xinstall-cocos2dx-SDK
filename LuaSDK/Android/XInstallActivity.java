@@ -82,14 +82,32 @@ public class XInstallActivity extends Cocos2dxActivity {
         });
     }
 
+    public static void registerWakeupDetailCallback(final  int luaFunc) {
+        runInUIThread(new Runnable() {
+            @Override
+            public void run() {
+                XInstallHelper.registerWakeupDetailCallback(luaFunc, cocos2dxActivity);
+            }
+        });
+    }
+
     public static void reportEventPoint(final String eventId, final int eventValue){
         runInUIThread(new Runnable() {
             @Override
             public void run() {
-                XInstall.reportPoint(eventId, eventValue);
+                XInstall.reportEvent(eventId, eventValue);
             }
         });
 
+    }
+
+    public static void reportShareByXinShareId(final String userId) {
+        runInUIThread(new Runnable() {
+            @Override
+            public void run() {
+                XInstall.reportShareByXinShareId(userId);
+            }
+        });
     }
 
     public static void reportRegister() {

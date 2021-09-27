@@ -19,9 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)registerWakeUpHandler:(NSDictionary *)dict;
 
++ (void)registerWakeUpDetailHandler:(NSDictionary *)dict;
+
 + (void)reportRegister;
 
 + (void)reportEventPoint:(NSDictionary *)dict;
+
++ (void)reportShareByXinShareId:(NSDictionary *)dict;
 
 + (void)setShowLog:(NSDictionary *)dict;
 

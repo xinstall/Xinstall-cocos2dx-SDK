@@ -19,9 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)registerWakeUpHandler;
 
++ (void)registerWakeUpDetailHandler;
+
 + (void)reportRegister;
 
 + (void)reportEventId:(NSString *)eventId eventValue:(NSNumber *)eventValue;
+
++ (void)reportShareByXinShareId:(NSString *)xinShareId;
 
 + (void)setShowLog:(BOOL)isShow;
 

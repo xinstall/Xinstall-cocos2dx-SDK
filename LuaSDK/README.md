@@ -210,9 +210,13 @@ xinstall:getInstance(10, getInstallCallBack)
 
 > 注意：调用该功能对应接口时需要在 Xinstall 中为对应 App 开通专业版服务
 
-在 App 需要唤醒参数时（手机已经安装 App 时，在 web 中直接通过 Universal Links / scheme 一键拉起 App），首先在 App 启动时预先调用 `registerWakeUpHandler` 接口添加监听，在回调中获取 web 中传递过来的参数。
+在 App 需要唤醒参数时（手机已经安装 App 时，在 web 中直接通过 Universal Links / scheme 一键拉起 App），首先在 App 启动时预先调用 `registerWakeUpHandler` 或 `registerWakeUpDetailHandler` 接口添加监听，在回调中获取 web 中传递过来的参数。
 
 在 Xinstall 模块初始化完成后，注册拉起事件的监听，在回调中获取拉起参数
+
+> 您可以在下述两种回调方法中任选一个进行实现，不同的回调方法有不同的逻辑，请选择最符合您实际场景的方法进行实现，请勿同时实现两个方法。
+
+**【方法一】：`registerWakeUpHandler()` 该方法只会在成功获取到拉起参数时，才会回调。如果无法成功获取到拉起参数，例如不是集成了 Xinstall Web SDK 的页面拉起您的 App 时，将会无法获取到拉起参数，也就不会执行该回调方法。**
 
 ```lua
 local function wakeUpCallBack(result)
@@ -221,6 +225,44 @@ end
 
 xinstall:registerWakeUpHandler(wakeUpCallBack)
 ```
+
+**【方法二】：`registerWakeUpDetailHandler()` 该方法无论是否成功获取到拉起参数，均会回调。如果成功获取到拉起参数，则 wakeUpData != {} 并且 error == {}；如果没有获取到拉起参数，则 wakeUpData == {} 并且 error != {}。**
+
+```lua
+local function wakeUpCallBack(result)
+    print("拉起参数回调："..result)
+end
+
+xinstall:registerWakeUpDetailHandler(wakeUpCallBack)
+
+// error.errorType 说明：
+/** 
+ * iOS
+ * -1 : SDK 配置错误；
+ * 0 : 未知错误；
+ * 1 : 网络错误；
+ * 2 : 没有获取到数据；
+ * 3 : 该 App 已被 Xinstall 后台封禁；
+ * 4 : 该操作不被允许（一般代表调用的方法没有开通权限）；
+ * 5 : 入参不正确；
+ * 6 : SDK 初始化未成功完成；
+ * 7 : 没有通过 Xinstall Web SDK 集成的页面拉起；
+ *
+ * Android
+ * 1006 : 未执行init 方法;
+ * 1007 : 未传入Activity，Activity 未比传参数
+ * 1008 : 用户未知操作 不处理
+ * 1009 : 不是唤醒执行的调用方法
+ * 1010 : 前后两次调起时间小于1s，请求过于频繁
+ * 1011 : 获取调起参数失败
+ * 1012 : 重复获取调起参数
+ * 1013 : 本次调起并非为XInstall的调起
+ * 1004 : 无权限
+ * 1014 : SCHEME URL 为空
+ */
+```
+
+
 
 
 
@@ -257,9 +299,29 @@ xinstall:reportEventPoint("123",25)
 
 
 
+#### 5. 场景定制统计
+
+场景业务介绍，可到[分享数据统计](https://doc.xinstall.com/environment/分享数据统计.html)页面查看
+
+> 分享统计主要用来统计分享业务相关的数据，例如分享次数、分享查看人数、分享新增用户等。在用户分享操作触发后（注：此处为分享事件触发，非分享完成或成功），可调用如下方法上报一次分享数据：
+
+```lua
+xinstall:reportShareByXinShareId("填写分享人或UID")
+```
+
+**补充说明**
+
+分享人或UID 可由您自行定义，只需要用以区分用户即可。
+
+您可在 Xinstall 管理后台 对应 App 中查看详细分享数据报表，表中的「分享人/UID」即为调用方法时携带的参数，其余字段含义可将鼠标移到字段右边的小问号上进行查看：
+
+![分享报表](https://doc.xinstall.com/integrationGuide/share.jpg)
 
 
-#### 5. 广告平台渠道功能
+
+
+
+#### 6. 广告平台渠道功能
 
 > 如果您在 Xinstall 管理后台对应 App 中，**只使用「自建渠道」，而不使用「广告平台渠道」，则无需进行本小节中额外的集成工作**，也能正常使用 Xinstall 提供的其他功能。
 >
@@ -267,7 +329,7 @@ xinstall:reportEventPoint("123",25)
 
 
 
-##### 5.1 配置工作
+##### 6.1 配置工作
 
 **iOS 端：**
 
@@ -299,7 +361,7 @@ xinstall:reportEventPoint("123",25)
 
 
 
-##### 5.2、更换初始化方法
+##### 6.2、更换初始化方法
 
 **使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
 
@@ -356,11 +418,11 @@ end
 
 
 
-##### 5.3、上架须知
+##### 6.3、上架须知
 
 **在使用了广告平台渠道后，若您的 App 需要上架，请认真阅读本段内容。**
 
-##### 5.3.1 iOS 端：上架 App Store
+##### 6.3.1 iOS 端：上架 App Store
 
 1. 如果您的 App 没有接入苹果广告（即在 App 中显示苹果投放的广告），那么在提交审核时，在广告标识符中，请按照下图勾选：
 
@@ -396,7 +458,7 @@ end
 
 ![AppStore_IDFA_6](https://cdn.xinstall.com/iOS_SDK%E7%B4%A0%E6%9D%90/IDFA_6.png)
 
-##### 5.3.2 Android 端
+##### 6.3.2 Android 端
 
 无特殊需要注意，如碰上相关合规问题，参考 [《应用合规指南》](https://doc.xinstall.com/应用合规指南.html)
 

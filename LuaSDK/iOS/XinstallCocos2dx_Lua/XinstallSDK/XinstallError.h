@@ -18,7 +18,8 @@ typedef NS_ENUM(NSInteger, XinstallErrorType) {
     XinstallErrorTypeAppForbid,                 // 该 App 已被 Xinstall 后台封禁
     XinstallErrorTypePermissionDenied,          // 该操作不被允许（一般代表调用的方法没有开通权限）
     XinstallErrorTypeParams,                    // 入参不正确
-    XinstallErrorTypeInitSDKUnfinished          // SDK 初始化未成功完成
+    XinstallErrorTypeInitSDKUnfinished,         // SDK 初始化未成功完成
+    XinstallErrorTypeNotValidWakeUp             // 没有通过 Xinstall Web SDK 集成的页面拉起
 };
 
 @interface XinstallError : NSObject

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)init;
 + (void)initWithAd:(NSString *)idfa;
-+(BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity;
++ (BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity;
 + (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 /// 设置是否显示SDK日志
 + (void)setShowLog:(BOOL)isShow;

@@ -1,4 +1,4 @@
-//  1.5.1
+//  1.5.2
 //  XinstallSDK.h
 //  XinstallSDK
 //
@@ -19,8 +19,19 @@ NS_ASSUME_NONNULL_BEGIN
  * 一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
  * @param appData 动态参数对象
  * appData 的 uo co 数据如果前端传入不是正常的json 数据，会返回前端传入的 String ，如果为正常 JSON 数据 会返回字典或数组
+ * @discuss 【注意】该方法只会在成功获取到拉起参数时，才会回调。如果无法成功获取到拉起参数，则不会执行该回调方法。
  */
 - (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData;
+
+/**
+ * 一键拉起时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
+ * @param appData 动态参数对象
+ * @param error 如果没有正确处理唤醒参数，则 appData == nil 且 error != nil ；如果正确处理了唤醒参数，则 appData != nil 且 error == nil
+ * appData 的 uo co 数据如果前端传入不是正常的json 数据，会返回前端传入的 String ，如果为正常 JSON 数据 会返回字典或数组
+ * @discuss 【注意】该方法无论是否成功获取到拉起参数，均会回调。
+ * @discuss 【注意】如果同时实现了 「- xinstall_getWakeUpParams:」 和 「- xinstall_getWakeUpParams:error:」方法，那么只会回调「- xinstall_getWakeUpParams:error:」方法
+ */
+- (void)xinstall_getWakeUpParams:(nullable XinstallData *)appData error:(nullable XinstallError *)error;
 
 /**
  * 安装时获取 H5页面 携带的动态参数，参数中如果携带渠道，也会在方法中一起返回渠道号
@@ -105,6 +116,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param eventValue 事件值（精确到整数）
  */
 - (void)reportEventPoint:(NSString *_Nonnull)eventID eventValue:(long)eventValue;
+
+/**
+ * 上报一次分享id（建议在分享成功后上报）
+ *
+ * @param xinShareId 分享id
+ */
+- (void)reportShareByXinShareId:(NSString *_Nonnull)xinShareId;
 
 + (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 

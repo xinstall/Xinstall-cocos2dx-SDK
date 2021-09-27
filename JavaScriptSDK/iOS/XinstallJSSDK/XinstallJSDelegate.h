@@ -24,13 +24,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^XinstallJSWakeUpDataBlock)(XinstallData * _Nullable wakeUpData);
+typedef void(^XinstallJSWakeUpDetailDataBlock)(XinstallData * _Nullable wakeUpData, XinstallError * _Nullable error);
+
 @interface XinstallJSDelegate : NSObject<XinstallDelegate>
 
 + (instancetype)defaultManager;
 
 - (void)getInstallDataBlock:(void (^_Nullable)(XinstallData * _Nullable, XinstallError * _Nullable ))installDataBlock;
 
-- (void)getWakeUpDataBlock:(void(^ _Nullable)(XinstallData *_Nullable))wakeUpDataBlock;
+- (void)getWakeUpDataBlock:(XinstallJSWakeUpDataBlock)wakeUpDataBlock;
+
+- (void)getWakeUpDetailDataBlock:(XinstallJSWakeUpDetailDataBlock)wakeUpDetailDataBlock;
 
 // Tools
 +(NSString *)jsonStringWithObject:(id)jsonObject;

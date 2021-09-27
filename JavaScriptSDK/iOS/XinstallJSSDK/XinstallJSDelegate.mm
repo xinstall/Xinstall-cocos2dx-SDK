@@ -7,12 +7,24 @@
 
 #import "XinstallJSDelegate.h"
 
+/// 注册 唤醒监听 类型
+typedef NS_ENUM(NSInteger, XinstallJSWakeUpListenerType) {
+    XinstallJSWakeUpListenerTypeTypeUnknow = 0,           // 未知类型，一般为没有注册过唤醒监听
+    XinstallJSWakeUpListenerTypeTypeWithoutDetail,        // 不包含错误的类型，只有获取唤醒参数成功时回调
+    XinstallJSWakeUpListenerTypeTypeWithDetail            // 包含错误的类型，获取唤醒参数成功或者失败时都会回调
+};
 
 @interface XinstallJSDelegate()
 
-@property (nonatomic, strong) NSMutableArray *wakeUpBlocks;
+@property (nonatomic, copy) XinstallJSWakeUpDataBlock wakeUpDataBlock;
+@property (nonatomic, copy) XinstallJSWakeUpDetailDataBlock wakeUpDetailDataBlock;
 
+/// 注册 唤醒监听 类型
+@property (nonatomic, assign) XinstallJSWakeUpListenerType wakeUpListenerType;
+/// 保存唤醒参数，因为唤醒的时机可能早于js注册唤醒
 @property (nonatomic, strong) XinstallData *wakeUpData;
+/// 保存唤醒错误信息，因为唤醒的时机可能早于js注册唤醒
+@property (nonatomic, strong) XinstallError *wakeUpError;
 
 @end
 
@@ -45,15 +57,31 @@
 }
 
 #pragma mark - XinstallDelegate methods
-- (void)xinstall_getWakeUpParams:(XinstallData *)appData {
-    NSLog(@"执行了xinstall_getWakeUpParams:");
-    if (self.wakeUpBlocks.count > 0) {
-        for (id block in self.wakeUpBlocks) {
-            void(^ wakeUpBlock)(XinstallData *) = (void(^)(XinstallData *))block;
-            wakeUpBlock(appData);
+- (void)xinstall_getWakeUpParams:(XinstallData *)appData error:(nullable XinstallError *)error {
+    self.wakeUpData = appData;
+    self.wakeUpError = error;
+    
+    switch (self.wakeUpListenerType) {
+        case XinstallJSWakeUpListenerTypeTypeWithDetail:
+        {
+            if (self.wakeUpDetailDataBlock) {
+                self.wakeUpDetailDataBlock(self.wakeUpData, self.wakeUpError);
+            }
         }
-    } else {
-        self.wakeUpData = appData;
+            break;
+        case XinstallJSWakeUpListenerTypeTypeWithoutDetail:
+        {
+            // 必须拿到了唤醒数据，才会回调
+            if (self.wakeUpData && self.wakeUpDataBlock) {
+                self.wakeUpDataBlock(self.wakeUpData);
+            }
+        }
+            break;
+        case XinstallJSWakeUpListenerTypeTypeUnknow:
+        {
+            // 什么都不做
+        }
+            break;
     }
 }
 
@@ -64,22 +92,42 @@
     }
 }
 
-- (void)getWakeUpDataBlock:(void (^)(XinstallData * _Nullable))wakeUpDataBlock {
-    if (self.wakeUpData) {
-        if (wakeUpDataBlock) {
-            XinstallData *wakeUpData = [[XinstallData alloc] init];
-            wakeUpData.channelCode = self.wakeUpData.channelCode;
-            wakeUpData.data = self.wakeUpData.data;
-            wakeUpData.firstFetch = self.wakeUpData.isFirstFetch;
-            wakeUpData.timeSpan = self.wakeUpData.timeSpan;
-            
-            wakeUpDataBlock(wakeUpData);
-            [self.wakeUpBlocks addObject:[wakeUpDataBlock copy]];
-            self.wakeUpData = nil;
+- (void)getWakeUpDataBlock:(XinstallJSWakeUpDataBlock)wakeUpDataBlock {
+    if (wakeUpDataBlock == nil) {
+        return;
+    }
+    
+    // 如果已经注册了带错误的唤醒监听，那么这个注册就不再生效
+    if (self.wakeUpListenerType == XinstallJSWakeUpListenerTypeTypeWithDetail) {
+        return;
+    }
+    // 当前没有注册过回调时，可以快速调用。这里需要判断一下，以免回调2次
+    BOOL couldQuickInvoke = (self.wakeUpDataBlock == nil);
+    // 设定类型和回调
+    self.wakeUpListenerType = XinstallJSWakeUpListenerTypeTypeWithoutDetail;
+    self.wakeUpDataBlock = wakeUpDataBlock;
+    
+    if (couldQuickInvoke) {
+        if (self.wakeUpData) {
+            wakeUpDataBlock(self.wakeUpData);
         }
-    } else {
-        if (wakeUpDataBlock) {
-            [self.wakeUpBlocks addObject:[wakeUpDataBlock copy]];
+    }
+}
+
+- (void)getWakeUpDetailDataBlock:(XinstallJSWakeUpDetailDataBlock)wakeUpDetailDataBlock {
+    if (wakeUpDetailDataBlock == nil) {
+        return;
+    }
+    
+    // 当前没有注册过回调时，可以快速调用。这里需要判断一下，以免回调2次
+    BOOL couldQuickInvoke = (self.wakeUpDetailDataBlock == nil);
+    // 设定类型和回调
+    self.wakeUpListenerType = XinstallJSWakeUpListenerTypeTypeWithDetail;
+    self.wakeUpDetailDataBlock = wakeUpDetailDataBlock;
+    
+    if (couldQuickInvoke) {
+        if (self.wakeUpData || self.wakeUpError) {
+            wakeUpDetailDataBlock(self.wakeUpData, self.wakeUpError);
         }
     }
 }
@@ -114,17 +162,9 @@
     }
 }
 
-#pragma mark - setter and getter methods
-- (NSMutableArray *)wakeUpBlocks {
-    if (_wakeUpBlocks == nil) {
-        _wakeUpBlocks = [[NSMutableArray alloc] init];
-    }
-    return _wakeUpBlocks;
-}
-
 #pragma mark - version methods
 - (NSString *)xiSdkThirdVersion {
-    return @"1.5.1";
+    return @"1.5.2";
 }
 
 - (NSInteger)xiSdkType {

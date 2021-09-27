@@ -87,12 +87,22 @@ public class XinstallCocos2dxJSActivity extends Cocos2dxActivity {
         });
     }
 
-    public static  void registerWakeUpHandler() {
+    public static void registerWakeUpHandler() {
         runInUIThread(new Runnable() {
             @Override
             public void run() {
                 // 调用SDK 获取调起参数
                 XinstallCocos2dxJSHelper.registerWakeupCallback(app);
+            }
+        });
+    }
+
+    public static void registerWakeUpDetailHandler() {
+        runInUIThread(new Runnable() {
+            @Override
+            public void run() {
+                // 调用SDK 获取调起参数
+                XinstallCocos2dxJSHelper.registerWakeupDetailCallback(app);
             }
         });
     }
@@ -112,7 +122,16 @@ public class XinstallCocos2dxJSActivity extends Cocos2dxActivity {
             @Override
             public void run() {
                 // 调用SDK 进行事件上报
-                XInstall.reportPoint(eventId, eventValue);
+                XInstall.reportEvent(eventId, eventValue);
+            }
+        });
+    }
+
+    public static void reportShareByXinShareId(final String shareId) {
+        runInUIThread(new Runnable() {
+            @Override
+            public void run() {
+                XInstall.reportShareByXinShareId(shareId);
             }
         });
     }

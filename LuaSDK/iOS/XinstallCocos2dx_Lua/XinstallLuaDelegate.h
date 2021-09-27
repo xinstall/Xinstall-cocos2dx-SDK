@@ -19,13 +19,20 @@ USING_NS_CC;
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^XinstallLuaWakeUpDataBlock)(XinstallData * _Nullable wakeUpData);
+typedef void(^XinstallLuaWakeUpDetailDataBlock)(XinstallData * _Nullable wakeUpData, XinstallError * _Nullable error);
+
+
 @interface XinstallLuaDelegate : NSObject <XinstallDelegate>
 
 + (XinstallLuaDelegate *)defaultManager;
 
 - (void)getInstallDataBlock:(void (^_Nullable)(XinstallData * _Nullable, XinstallError * _Nullable ))installDataBlock;
 
-- (void)getWakeUpDataBlock:(void(^ _Nullable)(XinstallData *_Nullable))wakeUpDataBlock;
+- (void)getWakeUpDataBlock:(XinstallLuaWakeUpDataBlock)wakeUpDataBlock;
+
+- (void)getWakeUpDetailDataBlock:(XinstallLuaWakeUpDetailDataBlock)wakeUpDetailDataBlock;
+
 // Tools
 +(NSString *)jsonStringWithObject:(id)jsonObject;
 

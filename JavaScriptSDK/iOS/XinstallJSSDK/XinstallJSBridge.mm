@@ -228,12 +228,101 @@ using namespace cocos2d;
     }];
 }
 
++ (void)registerWakeUpDetailHandler {
+    [[XinstallJSDelegate defaultManager] getWakeUpDetailDataBlock:^(XinstallData * _Nullable wakeUpData, XinstallError * _Nullable error) {
+        NSDictionary *wakeMsgDic = @{};
+        
+        if (![XinstallJSBridge isEmptyData:wakeUpData]) {
+            NSString *channelCode = @"";
+            NSString * timeSpan = @"0";
+            
+            NSDictionary *uo;
+            NSDictionary *co;
+            NSMutableDictionary *dataDic = [NSMutableDictionary dictionary];
+            if ([wakeUpData.data isKindOfClass:[NSDictionary class]]) {
+                uo = [wakeUpData.data objectForKey:@"uo"];
+                co = [wakeUpData.data objectForKey:@"co"];
+            }
+            
+            if (uo) {
+                id uoJson;
+                if ([uo isKindOfClass:[NSDictionary class]]) {
+                    uoJson = uo;
+                } else if ([uo isKindOfClass:[NSString class]]) {
+                    uoJson = uo;
+                }
+            
+                [dataDic setValue:uoJson?:@{} forKey:@"uo"];
+            }
+            
+            if (co) {
+                id coJson;
+                if ([co isKindOfClass:[NSDictionary class]]) {
+                    coJson = co;
+                } else if ([uo isKindOfClass:[NSString class]]) {
+                    coJson = co;
+                }
+            
+                [dataDic setValue:coJson?:@{} forKey:@"co"];
+            }
+            
+            if (wakeUpData.channelCode) {
+                channelCode = wakeUpData.channelCode;
+            }
+            
+            if (wakeUpData.timeSpan > 0) {
+                timeSpan = [NSString stringWithFormat:@"%zd",wakeUpData.timeSpan];
+            }
+
+            wakeMsgDic = @{ @"wakeUpData" : @{@"channelCode": channelCode,@"timeSpan":timeSpan, @"data": dataDic} , @"error" : @{}};
+        } else {
+            wakeMsgDic = @{ @"wakeUpData" : @{} , @"error" : @{ @"errorType" : @(error.type), @"errorMsg" : error.errorMsg }};
+        }
+        
+        NSString *jsonOfWakeUp = [XinstallJSDelegate jsonStringWithObject:wakeMsgDic];
+        std::string jsonStr = [jsonOfWakeUp UTF8String];
+        
+#ifndef HAVE_INSPECTOR
+        std::string funcName = [@"var xinstall = require(\"XinstallSDK\");xinstall._wakeupCallback" UTF8String];
+#else
+        std::string funcName = [@"var xinstall = window.__require(\"XinstallSDK\");xinstall._wakeupCallback" UTF8String];
+#endif
+        std::string jsCallStr = cocos2d::StringUtils::format("%s(%s);", funcName.c_str(),jsonStr.c_str());
+#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX
+        BOOL success = se::ScriptEngine::getInstance()->evalString(jsCallStr.c_str());
+#else
+        BOOL success = ScriptingCore::getInstance()->evalString(jsCallStr.c_str());
+#endif
+        if (!success) {
+            NSLog(@"XinstallJSSDK: 因为没有成功，所以通过直接引用_wakeupCallback的方式进行回调。");
+            std::string funcName = [@"_wakeupCallback" UTF8String];
+            std::string jsCallStr = cocos2d::StringUtils::format("%s(%s);", funcName.c_str(),jsonStr.c_str());
+            
+#if CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL_TMX
+            BOOL s = se::ScriptEngine::getInstance()->evalString(jsCallStr.c_str());
+#else
+            BOOL s = ScriptingCore::getInstance()->evalString(jsCallStr.c_str());
+#endif
+            if (!s) {
+                NSLog(@"XinstallJSSDK: 回调失败，请在调用registerWakeUpHandler的地方调用_wakeupCallback 回调方法，已获取回调数据，具体可以参考XinstallSDK.js");
+            }
+        } else {
+            NSLog(@"XinstallJSSDK: _wakeupCallback 参数回调成功。");
+        }
+        
+    }];
+}
+
 + (void)reportRegister {
     [XinstallSDK reportRegister];
 }
 
 + (void)reportEventId:(NSString *)eventId eventValue:(NSNumber *)eventValue {
     [[XinstallSDK defaultManager] reportEventPoint:eventId eventValue:[eventValue longValue]];
+}
+
++ (void)reportShareByXinShareId:(NSString *)xinShareId {
+    [[XinstallSDK defaultManager] reportShareByXinShareId:xinShareId];
 }
 
 + (void)setShowLog:(BOOL)isShow {

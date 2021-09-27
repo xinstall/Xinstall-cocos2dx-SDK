@@ -3,12 +3,16 @@ var xinstall = {
 
 	},
 
+	wakeupDetailCallback: function(appData) {
+
+	},
+
 	installCallback: function(appData) {
 
 	},
-	
+
 	premissionSuccessCallback: function() {
-		
+
 	},
 
 	_installCallback: function(appData) {
@@ -22,13 +26,19 @@ var xinstall = {
 			this.wakeupCallback(appData);
 		}
 	},
-	
+
+	_wakeupDetailCallback: function(appData) {
+		if(this.wakeupDetailCallback != null) {
+			this.wakeupDetailCallback(appData);
+		}
+	},
+
 	_premissionCallback: function() {
 		if(this.premissionCallback != null) {
 			this.premissionCallback()
 		}
 	},
-	
+
 
 	setLog: function(isOpen) {
 		if (cc.sys.OS_ANDROID == cc.sys.os) {
@@ -106,6 +116,17 @@ var xinstall = {
 		}
 	},
 
+	registerWakeUpDetailHandler: function(callback) {
+		this.wakeupDetailCallback = callback;
+		if (cc.sys.OS_IOS == cc.sys.os) {
+			// iOS 平台
+			jsb.reflection.callStaticMethod("XinstallJSBridge","registerWakeUpDetailHandler");
+		} else if (cc.sys.OS_ANDROID == cc.sys.os) {
+			jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
+								"registerWakeUpDetailHandler", "()V");
+		}
+	},
+
 	reportRegister: function() {
 		if (cc.sys.OS_IOS == cc.sys.os) {
 			// iOS 平台
@@ -127,6 +148,18 @@ var xinstall = {
                 "reportEvent","(Ljava/lang/String;I)V",eventId,eventValue);
 		}
 	},
+
+	reportShareByXinShareId: function(xinShareId) {
+		if (cc.sys.OS_IOS == cc.sys.os) {
+			// iOS 平台
+			jsb.reflection.callStaticMethod("XinstallJSBridge","reportShareByXinShareId:",xinShareId);
+		} else if (cc.sys.OS_ANDROID == cc.sys.os) {
+			// 安卓平台
+			jsb.reflection.callStaticMethod("org/cocos2dx/javascript/AppActivity",
+                "reportShareByXinShareId","(Ljava/lang/String;)V",xinShareId);
+		}
+	},
+
 };
 
 module.exports = xinstall;
