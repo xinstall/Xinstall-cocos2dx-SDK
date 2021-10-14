@@ -164,7 +164,7 @@ typedef NS_ENUM(NSInteger, XinstallJSWakeUpListenerType) {
 
 #pragma mark - version methods
 - (NSString *)xiSdkThirdVersion {
-    return @"1.5.2";
+    return @"1.5.3";
 }
 
 - (NSInteger)xiSdkType {
