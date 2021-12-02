@@ -376,9 +376,10 @@ xinstall:reportShareByXinShareId("填写分享人或UID")
 入参内部字段：
 
 * iOS 端：
-  | 参数名 | 参数类型 | 描述                   |
-  | ------ | -------- | ---------------------- |
-  | idfa   | 字符串   | iOS 系统中的广告标识符 |
+  | 参数名 | 参数类型 | 描述                                                         |
+  | ------ | -------- | ------------------------------------------------------------ |
+  | idfa   | string   | iOS 系统中的广告标识符                                       |
+  | asa    | boolean  | 是否开启 ASA 渠道，不需要时可以不传。详见《7、苹果搜索广告（ASA）渠道功能》 |
   
 * Android 端：
 
@@ -463,6 +464,46 @@ end
 ##### 6.3.2 Android 端
 
 无特殊需要注意，如碰上相关合规问题，参考 [《应用合规指南》](https://doc.xinstall.com/应用合规指南.html)
+
+
+
+#### 7. 苹果搜索广告（ASA）渠道功能
+
+> 如果您在 Xinstall 管理后台对应 App 中，**不使用「ASA渠道」，则无需进行本小节中额外的集成工作**，也能正常使用 Xinstall 提供的其他功能。
+
+##### 7.1、更换初始化方法
+
+**使用新的 initWithAd 方法，替代原先的 init 方法来进行模块的初始化**
+
+**入参说明**：需要主动传入参数，字典
+
+入参内部字段：
+
+* iOS 端：
+
+  | 参数名 | 参数类型 | 描述                                                         |
+  | ------ | -------- | ------------------------------------------------------------ |
+  | idfa   | string   | iOS 系统中的广告标识符（不需要时可以不传）                   |
+  | asa    | boolean  | 是否开启 ASA 渠道，true 时为开启，false 或者不传时均为不开启 |
+
+**调用示例**
+
+```javascript
+local xinstall = require("xinstall")
+
+local targetPlatform = cc.Application:getInstance():getTargetPlatform()
+if (cc.PLATFORM_OS_IPHONE == targetPlatform) or (cc.PLATFORM_OS_IPAD == targetPlatform) then
+  // 只使用 asa 渠道，不使用广告渠道时，只需要传入 asa 参数
+  xinstall:initWithAd({asa = true})
+  // 如果需要同时使用广告渠道，那么需要同时传入 idfa 参数，根据《6、广告平台渠道功能》中的方法获取到 idfa 后，再调用初始化方法：
+  // xinstall:initWithAd({idfa = result, asa = true})
+end
+if (cc.PLATFORM_OS_ANDROID == targetPlatform) then
+    xinstall:init()
+end
+```
+
+
 
 
 

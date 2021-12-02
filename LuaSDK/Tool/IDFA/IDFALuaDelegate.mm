@@ -6,10 +6,17 @@
 //
 
 #import "IDFALuaDelegate.h"
+#import <UIKit/UIKit.h>
 #import <AdSupport/AdSupport.h>
 #if __has_include(<AppTrackingTransparency/AppTrackingTransparency.h>)
 #import <AppTrackingTransparency/AppTrackingTransparency.h>
 #endif
+
+@interface IDFALuaDelegate ()
+
+@property (nonatomic, strong) NSTimer *getIDFATimer;
+
+@end
 
 @implementation IDFALuaDelegate
 
@@ -37,14 +44,31 @@
 - (void)getIDFAWithCompletion:(void(^)(NSString *))competion {
 #if __has_include(<AppTrackingTransparency/AppTrackingTransparency.h>)
     if (@available(iOS 14, *)) {
-        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-            NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                if (competion) {
-                    competion(idfa);
+        if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+                NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (competion) {
+                        competion(idfa);
+                    }
+                });
+            }];
+        } else {
+            self.getIDFATimer = [NSTimer scheduledTimerWithTimeInterval:2 repeats:YES block:^(NSTimer * _Nonnull timer) {
+                if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive) {
+                    [self.getIDFATimer invalidate];
+                    
+                    [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+                        NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            if (competion) {
+                                competion(idfa);
+                            }
+                        });
+                    }];
                 }
-            });
-        }];
+            }];
+        }
     } else {
         NSString *idfa = ASIdentifierManager.sharedManager.advertisingIdentifier.UUIDString;
         if (competion) {

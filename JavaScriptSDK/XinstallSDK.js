@@ -84,11 +84,14 @@ var xinstall = {
 			    "initWithAd", "(ZZLjava/lang/String;Ljava/lang/String;)V",adEnabled,isNeedImeiPremission,oaid,gaid);
 		} else if (cc.sys.OS_IOS == cc.sys.os) {
 			var idfa = params.idfa;
-			cc.log("idfa = " + idfa);
 			if (idfa == null || idfa == undefined) {
 				idfa = "";
 			}
-			jsb.reflection.callStaticMethod("XinstallJSBridge", "initWithAd:", idfa);
+			var asa = params.asa;
+			if (asa == null || asa == undefined) {
+				asa = false;
+			}
+			jsb.reflection.callStaticMethod("XinstallJSBridge", "initWithAd:asa:", idfa, asa);
 		}
 	},
 

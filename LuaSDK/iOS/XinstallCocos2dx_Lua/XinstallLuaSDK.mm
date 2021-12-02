@@ -8,8 +8,9 @@
 #import "XinstallLuaSDK.h"
 #import "XinstallSDK/XinstallSDK.h"
 #import "XinstallLuaDelegate.h"
+#import <AdServices/AAAttribution.h>
 
-NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.3_THIRDSDKVERSION_XINSTALL";
+NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.5_THIRDSDKVERSION_XINSTALL";
 NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXLUA_THIRDPLATFORM_XINSTALL";
 
 @interface XinstallLuaSDK()
@@ -24,8 +25,20 @@ NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXLUA_TH
     [XinstallSDK initWithDelegate:[XinstallLuaDelegate defaultManager]];
 }
 
-+ (void)initWithAd:(NSString *)idfa {
-    [XinstallSDK initWithDelegate:[XinstallLuaDelegate defaultManager] idfa:idfa];
++ (void)initWithAd:(NSDictionary *)adConfig; {
+    NSString *idfa = @"";
+    NSString *asaToken = @"";
+    if ([adConfig isKindOfClass:[NSDictionary class]]) {
+        idfa = adConfig[@"idfa"];
+        if ([adConfig[@"asa"] boolValue]) {
+            if (@available(iOS 14.3, *)) {
+                NSError *error;
+                asaToken = [AAAttribution attributionTokenWithError:&error];
+            }
+        }
+    }
+    
+    [XinstallSDK initWithDelegate:[XinstallLuaDelegate defaultManager] idfa:idfa asaToken:asaToken];
 }
 
 + (BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity{

@@ -58,11 +58,7 @@
 }
 
 + (void)initWithAd:(NSDictionary *)dict {
-    NSString *idfa = dict[@"idfa"];
-    if (!idfa) {
-        idfa = @"";
-    }
-    [XinstallLuaSDK initWithAd:idfa];
+    [XinstallLuaSDK initWithAd:dict];
 }
 
 +(void)getInstall:(NSDictionary *)dict {

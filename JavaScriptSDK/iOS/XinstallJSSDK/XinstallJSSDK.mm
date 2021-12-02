@@ -8,8 +8,9 @@
 #import "XinstallJSSDK.h"
 #import "XinstallSDK.h"
 #import "XinstallJSDelegate.h"
+#import <AdServices/AAAttribution.h>
 
-NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.3_THIRDSDKVERSION_XINSTALL";
+NSString * const XinstallThirdVersion = @"XINSTALL_THIRDSDKVERSION_1.5.5_THIRDSDKVERSION_XINSTALL";
 NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXJS_THIRDPLATFORM_XINSTALL";
 
 @implementation XinstallJSSDK
@@ -21,8 +22,20 @@ NSString * const XinstallThirdPlatform = @"XINSTALL_THIRDPLATFORM_COCOS2DXJS_THI
     [XinstallSDK initWithDelegate:[XinstallJSDelegate defaultManager]];
 }
 
-+ (void)initWithAd:(NSString *)idfa {
-    [XinstallSDK initWithDelegate:[XinstallJSDelegate defaultManager] idfa:idfa];
++ (void)initWithAd:(NSDictionary *)adConfig {
+    NSString *idfa = @"";
+    NSString *asaToken = @"";
+    if ([adConfig isKindOfClass:[NSDictionary class]]) {
+        idfa = adConfig[@"idfa"];
+        if ([adConfig[@"asa"] boolValue]) {
+            if (@available(iOS 14.3, *)) {
+                NSError *error;
+                asaToken = [AAAttribution attributionTokenWithError:&error];
+            }
+        }
+    }
+    
+    [XinstallSDK initWithDelegate:[XinstallJSDelegate defaultManager] idfa:idfa asaToken:asaToken];
 }
 
 + (BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity {

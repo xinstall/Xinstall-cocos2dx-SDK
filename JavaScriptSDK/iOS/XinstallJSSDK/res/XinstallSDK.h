@@ -1,4 +1,4 @@
-//  1.5.3
+//  1.5.5
 //  XinstallSDK.h
 //  XinstallSDK
 //
@@ -80,6 +80,19 @@ NS_ASSUME_NONNULL_BEGIN
  * @discuss [该方法和 + initWithDelegate: 的区别]：使用该方法初始化时，需要根据文档获取 IDFA 后进行初始化，支持上报广告平台渠道的数据（在 Xinstall 管理后台新建的广告平台渠道）；使用 + initWithDelegate: 方法初始化，则无法统计广告平台渠道的数据。
  */
 + (void)initWithDelegate:(id<XinstallDelegate> _Nonnull)delegate idfa:(NSString *)idfa;
+
+/**
+ * 【重要】初始化 Xinstall SDK（支持广告平台渠道。若您不使用广告平台渠道，请使用 + initWithDelegate: 方法，否则可能导致上架 App Store 时被拒绝）
+ * 该方法只需要调用一次，调用时机尽量提前，一般在 App 启动时调用该方法进行初始化
+ * 调用该方法前，需在 Info.plist 文件中配置键值对，键为固定值 com.xinstall.APP_KEY ，值为 Xinstall 后台对应应用的 appKey，可在 Xinstall 官方后台获取
+ *
+ * @param delegate 实现 XinstallDelegate 的对象
+ * @param idfa 当前手机 IDFA 字符串，可以为空
+ * @param asaToken 当前手机 ASA token，可以为空
+ *
+ * @discuss [该方法和 + initWithDelegate: 的区别]：使用该方法初始化时，需要根据文档获取 IDFA 后进行初始化，支持上报广告平台渠道的数据（在 Xinstall 管理后台新建的广告平台渠道）；支持上报 ASA 渠道的数据
+ */
++ (void)initWithDelegate:(id<XinstallDelegate> _Nonnull)delegate idfa:(nullable NSString *)idfa asaToken:(nullable NSString *)asaToken;
 
 /**
  * 处理 通用链接

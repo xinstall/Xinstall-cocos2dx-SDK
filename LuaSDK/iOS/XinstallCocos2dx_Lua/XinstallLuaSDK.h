@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XinstallLuaSDK : NSObject
 
 + (void)init;
-+ (void)initWithAd:(NSString *)idfa;
++ (void)initWithAd:(NSDictionary *)adConfig;
 + (BOOL)continueUserActivity:(NSUserActivity*_Nullable)userActivity;
 + (BOOL)handleSchemeURL:(NSURL *_Nullable)URL;
 /// 设置是否显示SDK日志

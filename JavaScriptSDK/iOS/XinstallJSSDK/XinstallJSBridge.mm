@@ -60,10 +60,13 @@ using namespace cocos2d;
     [XinstallJSSDK init];
 }
 
-+ (void)initWithAd:(NSString *)idfa {
-    [XinstallJSSDK initWithAd:idfa];
++ (void)initWithAd:(NSString *)idfa asa:(BOOL)asa {
+    NSDictionary *adConfig = @{
+        @"idfa" : idfa ?: @"",
+        @"asa" : @(asa)
+    };
+    [XinstallJSSDK initWithAd:adConfig];
 }
-
 
 + (void)getInstallParams {
     [[XinstallJSDelegate defaultManager] getInstallDataBlock:^(XinstallData * _Nullable installData, XinstallError * _Nullable error) {

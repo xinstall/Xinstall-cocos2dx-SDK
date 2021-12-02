@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)init;
 
-+ (void)initWithAd:(NSString *)idfa;
++ (void)initWithAd:(NSString *)idfa asa:(BOOL)asa;
 
 + (void)getInstallParams;
 
