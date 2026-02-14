@@ -14,6 +14,7 @@
 extern NSString * _Nonnull const XinstallAppKey;
 extern NSString * _Nonnull const XinstallBaseServiceURL;
 extern NSString * _Nonnull const XinstallVersion;
+extern NSString * _Nonnull const XinstallNetworkCheck;
 
 #ifdef DEBUG
 #define XINNULLSAFE_ENABLED 1

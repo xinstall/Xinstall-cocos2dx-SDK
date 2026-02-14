@@ -166,7 +166,7 @@ typedef NS_ENUM(NSInteger, XinstallLuaWakeUpListenerType) {
 
 #pragma mark - version methods
 - (NSString *)xiSdkThirdVersion {
-    return @"1.5.5";
+    return @"1.7.6";
 }
 
 - (NSInteger)xiSdkType {

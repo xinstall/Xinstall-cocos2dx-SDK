@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
                  channelCode:(NSString *)channelCode;
                 
 
+
+/// xinstallId
+@property (nonatomic, copy) NSString *xinstallId;
+
 /// 动态参数
 @property (nonatomic, copy) NSDictionary *data;
 /// 渠道编号

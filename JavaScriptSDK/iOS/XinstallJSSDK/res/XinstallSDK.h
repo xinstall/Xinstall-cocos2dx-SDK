@@ -1,4 +1,4 @@
-//  1.5.5
+//  1.7.6
 //  XinstallSDK.h
 //  XinstallSDK
 //
@@ -129,6 +129,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @param eventValue 事件值（精确到整数）
  */
 - (void)reportEventPoint:(NSString *_Nonnull)eventID eventValue:(long)eventValue;
+
+/**
+ * 在用户开启详情按钮后，可以统计事件详情，并且可以上传关联数据(subValue)
+ * 上报一次事件（必须预先在 Xinstall 后台对应 App 内创建好事件ID，才能正确统计进去）
+ *
+ * 调用该方法后，会上报一次对应事件。上报机制非实时，会存在一定的延时，但不会超过1分钟
+ *
+ * @param eventID 事件ID（在 Xinstall 后台预先创建）
+ * @param eventValue 事件值（精确到整数）
+ * @param subValue 事件关联值 (字符串)
+ */
+- (void)reportEventWhenOpenDetailInfoWithEventPoint:(NSString *)eventID eventValue:(long)eventValue subValue:(NSString *)subValue;
 
 /**
  * 上报一次分享id（建议在分享成功后上报）
